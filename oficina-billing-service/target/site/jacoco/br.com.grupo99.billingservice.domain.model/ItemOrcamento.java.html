@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ItemOrcamento.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">billing-service</a> &gt; <a href="index.source.html" class="el_package">br.com.grupo99.billingservice.domain.model</a> &gt; <span class="el_source">ItemOrcamento.java</span></div><h1>ItemOrcamento.java</h1><pre class="source lang-java linenums">package br.com.grupo99.billingservice.domain.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+
+/**
+ * Value Object representando um item de orçamento.
+ */
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ItemOrcamento {
+
+    private TipoItem tipo;
+
+    private String descricao;
+
+    private Integer quantidade;
+
+    private BigDecimal valorUnitario;
+
+    private BigDecimal valorTotal;
+
+    /**
+     * Construtor para testes (calcula automaticamente o valorTotal).
+     *
+     * @param tipo          tipo do item
+     * @param descricao     descrição
+     * @param quantidade    quantidade
+     * @param valorUnitario valor unitário
+     */
+<span class="fc" id="L37">    public ItemOrcamento(TipoItem tipo, String descricao, Integer quantidade, BigDecimal valorUnitario) {</span>
+<span class="fc" id="L38">        this.tipo = tipo;</span>
+<span class="fc" id="L39">        this.descricao = descricao;</span>
+<span class="fc" id="L40">        this.quantidade = quantidade;</span>
+<span class="fc" id="L41">        this.valorUnitario = valorUnitario;</span>
+<span class="fc" id="L42">        this.valorTotal = calcularValorTotal();</span>
+<span class="fc" id="L43">    }</span>
+
+    /**
+     * Calcula o valor total do item.
+     *
+     * @return valor total (quantidade * valorUnitario)
+     */
+    public BigDecimal calcularValorTotal() {
+<span class="pc bpc" id="L51" title="2 of 4 branches missed.">        if (quantidade == null || valorUnitario == null) {</span>
+<span class="nc" id="L52">            return BigDecimal.ZERO;</span>
+        }
+<span class="fc" id="L54">        return valorUnitario.multiply(BigDecimal.valueOf(quantidade));</span>
+    }
+
+    /**
+     * Valida se o item está consistente.
+     *
+     * @return true se item é válido
+     */
+    public boolean isValido() {
+<span class="nc bnc" id="L63" title="All 4 branches missed.">        return tipo != null</span>
+<span class="nc bnc" id="L64" title="All 4 branches missed.">                &amp;&amp; descricao != null &amp;&amp; !descricao.isBlank()</span>
+<span class="nc bnc" id="L65" title="All 4 branches missed.">                &amp;&amp; quantidade != null &amp;&amp; quantidade &gt; 0</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">                &amp;&amp; valorUnitario != null &amp;&amp; valorUnitario.compareTo(BigDecimal.ZERO) &gt; 0;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

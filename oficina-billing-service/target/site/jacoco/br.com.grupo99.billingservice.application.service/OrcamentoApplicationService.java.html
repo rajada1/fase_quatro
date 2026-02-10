@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrcamentoApplicationService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">billing-service</a> &gt; <a href="index.source.html" class="el_package">br.com.grupo99.billingservice.application.service</a> &gt; <span class="el_source">OrcamentoApplicationService.java</span></div><h1>OrcamentoApplicationService.java</h1><pre class="source lang-java linenums">package br.com.grupo99.billingservice.application.service;
+
+import br.com.grupo99.billingservice.application.dto.CreateOrcamentoRequest;
+import br.com.grupo99.billingservice.application.dto.OrcamentoResponse;
+import br.com.grupo99.billingservice.application.mapper.OrcamentoMapper;
+import br.com.grupo99.billingservice.domain.model.Orcamento;
+import br.com.grupo99.billingservice.domain.model.StatusOrcamento;
+import br.com.grupo99.billingservice.domain.repository.OrcamentoRepository;
+import br.com.grupo99.billingservice.infrastructure.messaging.BillingEventPublisher;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
+
+/**
+ * Application Service para Orçamento
+ * 
+ * ✅ CLEAN ARCHITECTURE: Orquestração de use cases na camada application
+ * - Não contém lógica de negócio (fica no domain)
+ * - Coordena chamadas entre domain e infrastructure
+ * - Gerencia transações
+ */
+<span class="fc" id="L24">@Slf4j</span>
+@Service
+@Transactional
+public class OrcamentoApplicationService {
+
+    private final OrcamentoRepository orcamentoRepository;
+    private final BillingEventPublisher eventPublisher;
+    private final OrcamentoMapper mapper;
+
+    public OrcamentoApplicationService(
+            OrcamentoRepository orcamentoRepository,
+            BillingEventPublisher eventPublisher,
+<span class="fc" id="L36">            OrcamentoMapper mapper) {</span>
+<span class="fc" id="L37">        this.orcamentoRepository = orcamentoRepository;</span>
+<span class="fc" id="L38">        this.eventPublisher = eventPublisher;</span>
+<span class="fc" id="L39">        this.mapper = mapper;</span>
+<span class="fc" id="L40">    }</span>
+
+    /**
+     * Use Case: Criar Orçamento
+     * 
+     * Fluxo:
+     * 1. Converter DTO em domain model
+     * 2. Persistir usando repository
+     * 3. Publicar evento via publisher
+     * 4. Retornar response
+     */
+    public OrcamentoResponse criar(CreateOrcamentoRequest request) {
+<span class="nc" id="L52">        log.info(&quot;Criando orçamento para OS: {}&quot;, request.getOsId());</span>
+
+        // 1. Domain: criar agregado
+<span class="nc" id="L55">        Orcamento orcamento = mapper.toDomain(request);</span>
+
+        // 2. Persistência: usar repository (não direto no BD)
+<span class="nc" id="L58">        Orcamento saved = orcamentoRepository.save(orcamento);</span>
+<span class="nc" id="L59">        log.info(&quot;Orçamento criado com ID: {}&quot;, saved.getId());</span>
+
+        // 3. Events: publicar eventos de domínio
+<span class="nc" id="L62">        eventPublisher.publicarOrcamentoCriado(saved);</span>
+
+        // 4. Response: converter domain para DTO
+<span class="nc" id="L65">        return mapper.toResponse(saved);</span>
+    }
+
+    /**
+     * Use Case: Buscar Orçamento por ID
+     */
+    public OrcamentoResponse obterPorId(UUID id) {
+<span class="nc" id="L72">        log.info(&quot;Buscando orçamento: {}&quot;, id);</span>
+
+<span class="nc" id="L74">        Orcamento orcamento = orcamentoRepository.findById(id)</span>
+<span class="nc" id="L75">                .orElseThrow(() -&gt; new RuntimeException(&quot;Orçamento não encontrado: &quot; + id));</span>
+
+<span class="nc" id="L77">        return mapper.toResponse(orcamento);</span>
+    }
+
+    /**
+     * Use Case: Aprovar Orçamento
+     * 
+     * Fluxo:
+     * 1. Buscar orçamento
+     * 2. Executar lógica de domínio (aprovar())
+     * 3. Persistir mudanças
+     * 4. Publicar evento
+     * 5. Retornar response
+     */
+    public OrcamentoResponse aprovar(UUID id) {
+<span class="nc" id="L91">        log.info(&quot;Aprovando orçamento: {}&quot;, id);</span>
+
+        // 1. Buscar domain
+<span class="nc" id="L94">        Orcamento orcamento = orcamentoRepository.findById(id)</span>
+<span class="nc" id="L95">                .orElseThrow(() -&gt; new RuntimeException(&quot;Orçamento não encontrado: &quot; + id));</span>
+
+        // 2. Executar lógica de domínio
+<span class="nc" id="L98">        orcamento.aprovar();</span>
+<span class="nc" id="L99">        log.info(&quot;Orçamento {} aprovado&quot;, id);</span>
+
+        // 3. Persistir
+<span class="nc" id="L102">        Orcamento updated = orcamentoRepository.save(orcamento);</span>
+
+        // 4. Publicar evento
+<span class="nc" id="L105">        eventPublisher.publicarOrcamentoAprovado(updated);</span>
+
+        // 5. Response
+<span class="nc" id="L108">        return mapper.toResponse(updated);</span>
+    }
+
+    /**
+     * Use Case: Rejeitar Orçamento
+     */
+    public OrcamentoResponse rejeitar(UUID id, String motivo) {
+<span class="nc" id="L115">        log.info(&quot;Rejeitando orçamento: {}, motivo: {}&quot;, id, motivo);</span>
+
+<span class="nc" id="L117">        Orcamento orcamento = orcamentoRepository.findById(id)</span>
+<span class="nc" id="L118">                .orElseThrow(() -&gt; new RuntimeException(&quot;Orçamento não encontrado: &quot; + id));</span>
+
+<span class="nc" id="L120">        orcamento.rejeitar();</span>
+<span class="nc" id="L121">        Orcamento updated = orcamentoRepository.save(orcamento);</span>
+
+<span class="nc" id="L123">        eventPublisher.publicarOrcamentoRejeitado(updated);</span>
+
+<span class="nc" id="L125">        return mapper.toResponse(updated);</span>
+    }
+
+    /**
+     * Use Case: Cancelar Orçamento
+     */
+    public void cancelar(UUID id) {
+<span class="nc" id="L132">        log.info(&quot;Cancelando orçamento: {}&quot;, id);</span>
+
+<span class="nc" id="L134">        Orcamento orcamento = orcamentoRepository.findById(id)</span>
+<span class="nc" id="L135">                .orElseThrow(() -&gt; new RuntimeException(&quot;Orçamento não encontrado: &quot; + id));</span>
+
+<span class="nc" id="L137">        orcamento.cancelar();</span>
+<span class="nc" id="L138">        orcamentoRepository.save(orcamento);</span>
+
+<span class="nc" id="L140">        log.info(&quot;Orçamento {} cancelado&quot;, id);</span>
+<span class="nc" id="L141">    }</span>
+
+    /**
+     * Use Case: Cancelar Orçamento por OS ID (para eventos Kafka)
+     */
+    public void cancelarPorOs(UUID osId, String motivo) {
+<span class="nc" id="L147">        log.info(&quot;Cancelando orçamento por OS: {}, motivo: {}&quot;, osId, motivo);</span>
+
+<span class="nc" id="L149">        Orcamento orcamento = orcamentoRepository.findByOsId(osId)</span>
+<span class="nc" id="L150">                .orElseThrow(() -&gt; new RuntimeException(&quot;Orçamento não encontrado para OS: &quot; + osId));</span>
+
+<span class="nc" id="L152">        orcamento.cancelar();</span>
+<span class="nc" id="L153">        orcamentoRepository.save(orcamento);</span>
+
+<span class="nc" id="L155">        log.info(&quot;Orçamento {} cancelado para OS: {}&quot;, orcamento.getId(), osId);</span>
+<span class="nc" id="L156">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

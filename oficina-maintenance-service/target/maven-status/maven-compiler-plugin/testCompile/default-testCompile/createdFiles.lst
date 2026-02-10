@@ -1,0 +1,3 @@
+br\com\grupo99\manutencao\adapter\config\TestConfig.class
+br\com\grupo99\manutencao\adapter\web\ManutencaoControllerTest.class
+br\com\grupo99\manutencao\application\service\ManutencaoApplicationServiceTest.class

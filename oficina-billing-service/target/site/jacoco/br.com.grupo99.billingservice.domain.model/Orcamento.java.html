@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Orcamento.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">billing-service</a> &gt; <a href="index.source.html" class="el_package">br.com.grupo99.billingservice.domain.model</a> &gt; <span class="el_source">Orcamento.java</span></div><h1>Orcamento.java</h1><pre class="source lang-java linenums">package br.com.grupo99.billingservice.domain.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * Aggregate Root representando um Orçamento.
+ * Gerencia itens, aprovações, rejeições e histórico.
+ * 
+ * ✅ CLEAN ARCHITECTURE: Domain sem dependências externas (sem Spring Data)
+ */
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Orcamento {
+
+    private UUID id;
+
+    private UUID osId; // ID da Ordem de Serviço
+
+    @Builder.Default
+    private StatusOrcamento status = StatusOrcamento.PENDENTE;
+
+    @Builder.Default
+    private List&lt;ItemOrcamento&gt; itens = new ArrayList&lt;&gt;();
+
+    private BigDecimal valorTotal;
+
+    private Instant dataGeracao;
+
+    private Instant dataAprovacao;
+
+    private Instant dataRejeicao;
+
+    private String observacao;
+
+    private String motivoRejeicao;
+
+    @Builder.Default
+    private List&lt;HistoricoStatus&gt; historico = new ArrayList&lt;&gt;();
+
+    private Instant createdAt;
+
+    private Instant updatedAt;
+
+    /**
+     * Factory method para criar novo orçamento.
+     *
+     * @param osId  ID da OS
+     * @param itens lista de itens
+     * @return novo Orcamento
+     */
+    public static Orcamento criar(UUID osId, List&lt;ItemOrcamento&gt; itens) {
+<span class="nc" id="L63">        Orcamento orcamento = Orcamento.builder()</span>
+<span class="nc" id="L64">                .id(UUID.randomUUID())</span>
+<span class="nc" id="L65">                .osId(osId)</span>
+<span class="nc" id="L66">                .status(StatusOrcamento.PENDENTE)</span>
+<span class="nc" id="L67">                .itens(itens)</span>
+<span class="nc" id="L68">                .dataGeracao(Instant.now())</span>
+<span class="nc" id="L69">                .historico(new ArrayList&lt;&gt;())</span>
+<span class="nc" id="L70">                .build();</span>
+
+<span class="nc" id="L72">        orcamento.calcularValorTotal();</span>
+<span class="nc" id="L73">        orcamento.adicionarHistorico(null, StatusOrcamento.PENDENTE, &quot;system&quot;, &quot;Orçamento gerado&quot;);</span>
+
+<span class="nc" id="L75">        return orcamento;</span>
+    }
+
+    /**
+     * Factory method sobrecargado para criar com descrição (compatibilidade com
+     * testes)
+     */
+    public static Orcamento criar(UUID osId, String descricao) {
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        if (osId == null) {</span>
+<span class="fc" id="L84">            throw new IllegalArgumentException(&quot;OS ID não pode ser nulo&quot;);</span>
+        }
+<span class="fc bfc" id="L86" title="All 4 branches covered.">        if (descricao == null || descricao.trim().isEmpty()) {</span>
+<span class="fc" id="L87">            throw new IllegalArgumentException(&quot;Descrição é obrigatória&quot;);</span>
+        }
+
+<span class="fc" id="L90">        Orcamento orcamento = Orcamento.builder()</span>
+<span class="fc" id="L91">                .id(UUID.randomUUID())</span>
+<span class="fc" id="L92">                .osId(osId)</span>
+<span class="fc" id="L93">                .status(StatusOrcamento.PENDENTE)</span>
+<span class="fc" id="L94">                .itens(new ArrayList&lt;&gt;())</span>
+<span class="fc" id="L95">                .dataGeracao(Instant.now())</span>
+<span class="fc" id="L96">                .historico(new ArrayList&lt;&gt;())</span>
+<span class="fc" id="L97">                .valorTotal(BigDecimal.ZERO)</span>
+<span class="fc" id="L98">                .observacao(descricao)</span>
+<span class="fc" id="L99">                .build();</span>
+
+<span class="fc" id="L101">        orcamento.adicionarHistorico(null, StatusOrcamento.PENDENTE, &quot;system&quot;, &quot;Orçamento gerado&quot;);</span>
+
+<span class="fc" id="L103">        return orcamento;</span>
+    }
+
+    /**
+     * Adiciona um item ao orçamento
+     */
+    public void adicionarItem(ItemOrcamento item) {
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        if (item == null) {</span>
+<span class="nc" id="L111">            throw new IllegalArgumentException(&quot;Item não pode ser nulo&quot;);</span>
+        }
+<span class="fc" id="L113">        this.itens.add(item);</span>
+<span class="fc" id="L114">        calcularValorTotal();</span>
+<span class="fc" id="L115">    }</span>
+
+    /**
+     * Retorna o osId.
+     */
+    public UUID getOsIdValue() {
+<span class="nc" id="L121">        return this.osId;</span>
+    }
+
+    /**
+     * Calcula o valor total somando todos os itens.
+     */
+    public void calcularValorTotal() {
+<span class="fc" id="L128">        this.valorTotal = itens.stream()</span>
+<span class="fc" id="L129">                .map(ItemOrcamento::calcularValorTotal)</span>
+<span class="fc" id="L130">                .reduce(BigDecimal.ZERO, BigDecimal::add);</span>
+<span class="fc" id="L131">    }</span>
+
+    /**
+     * Aprova o orçamento.
+     *
+     * @param usuario    usuário que aprovou
+     * @param observacao observação opcional
+     * @throws IllegalStateException se transição não for válida
+     */
+    public void aprovar(String usuario, String observacao) {
+<span class="fc" id="L141">        validarTransicao(StatusOrcamento.APROVADO);</span>
+
+<span class="fc" id="L143">        StatusOrcamento statusAnterior = this.status;</span>
+<span class="fc" id="L144">        this.status = StatusOrcamento.APROVADO;</span>
+<span class="fc" id="L145">        this.dataAprovacao = Instant.now();</span>
+<span class="fc" id="L146">        this.observacao = observacao;</span>
+
+<span class="fc" id="L148">        adicionarHistorico(statusAnterior, StatusOrcamento.APROVADO, usuario, observacao);</span>
+<span class="fc" id="L149">    }</span>
+
+    /**
+     * Sobrecarga sem parâmetros para testes
+     */
+    public void aprovar() {
+<span class="fc" id="L155">        aprovar(&quot;Sistema&quot;, &quot;Orçamento aprovado&quot;);</span>
+<span class="fc" id="L156">    }</span>
+
+    /**
+     * Rejeita o orçamento.
+     *
+     * @param usuario usuário que rejeitou
+     * @param motivo  motivo da rejeição
+     * @throws IllegalStateException se transição não for válida
+     */
+    public void rejeitar(String usuario, String motivo) {
+<span class="fc" id="L166">        validarTransicao(StatusOrcamento.REJEITADO);</span>
+
+<span class="fc" id="L168">        StatusOrcamento statusAnterior = this.status;</span>
+<span class="fc" id="L169">        this.status = StatusOrcamento.REJEITADO;</span>
+<span class="fc" id="L170">        this.dataRejeicao = Instant.now();</span>
+<span class="fc" id="L171">        this.motivoRejeicao = motivo;</span>
+
+<span class="fc" id="L173">        adicionarHistorico(statusAnterior, StatusOrcamento.REJEITADO, usuario, motivo);</span>
+<span class="fc" id="L174">    }</span>
+
+    /**
+     * Sobrecarga sem parâmetros para testes
+     */
+    public void rejeitar() {
+<span class="fc" id="L180">        rejeitar(&quot;Sistema&quot;, &quot;Orçamento rejeitado&quot;);</span>
+<span class="fc" id="L181">    }</span>
+
+    /**
+     * Cancela o orçamento.
+     *
+     * @param usuario usuário que cancelou
+     * @param motivo  motivo do cancelamento
+     * @throws IllegalStateException se transição não for válida
+     */
+    public void cancelar(String usuario, String motivo) {
+<span class="fc" id="L191">        validarTransicao(StatusOrcamento.CANCELADO);</span>
+
+<span class="fc" id="L193">        StatusOrcamento statusAnterior = this.status;</span>
+<span class="fc" id="L194">        this.status = StatusOrcamento.CANCELADO;</span>
+
+<span class="fc" id="L196">        adicionarHistorico(statusAnterior, StatusOrcamento.CANCELADO, usuario, motivo);</span>
+<span class="fc" id="L197">    }</span>
+
+    /**
+     * Sobrecarga sem parâmetros para testes
+     */
+    public void cancelar() {
+<span class="fc" id="L203">        cancelar(&quot;Sistema&quot;, &quot;Orçamento cancelado&quot;);</span>
+<span class="fc" id="L204">    }</span>
+
+    /**
+     * Valida se a transição de status é permitida.
+     *
+     * @param novoStatus novo status desejado
+     * @throws IllegalStateException se transição não for válida
+     */
+    private void validarTransicao(StatusOrcamento novoStatus) {
+<span class="fc bfc" id="L213" title="All 2 branches covered.">        if (!this.status.podeTransicionarPara(novoStatus)) {</span>
+<span class="fc" id="L214">            throw new IllegalStateException(</span>
+<span class="fc" id="L215">                    String.format(&quot;Transição inválida de %s para %s&quot;, this.status, novoStatus));</span>
+        }
+<span class="fc" id="L217">    }</span>
+
+    /**
+     * Adiciona entrada no histórico.
+     *
+     * @param statusAnterior status anterior
+     * @param novoStatus     novo status
+     * @param usuario        usuário
+     * @param observacao     observação
+     */
+    private void adicionarHistorico(StatusOrcamento statusAnterior, StatusOrcamento novoStatus,
+            String usuario, String observacao) {
+<span class="fc" id="L229">        this.historico.add(HistoricoStatus.criar(statusAnterior, novoStatus, usuario, observacao));</span>
+<span class="fc" id="L230">    }</span>
+
+    /**
+     * Verifica se o orçamento está pendente.
+     *
+     * @return true se status é PENDENTE
+     */
+    public boolean isPendente() {
+<span class="nc bnc" id="L238" title="All 2 branches missed.">        return this.status == StatusOrcamento.PENDENTE;</span>
+    }
+
+    /**
+     * Verifica se o orçamento foi aprovado.
+     *
+     * @return true se status é APROVADO
+     */
+    public boolean isAprovado() {
+<span class="nc bnc" id="L247" title="All 2 branches missed.">        return this.status == StatusOrcamento.APROVADO;</span>
+    }
+
+    /**
+     * Verifica se o orçamento foi rejeitado.
+     *
+     * @return true se status é REJEITADO
+     */
+    public boolean isRejeitado() {
+<span class="nc bnc" id="L256" title="All 2 branches missed.">        return this.status == StatusOrcamento.REJEITADO;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrcamentoMapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">billing-service</a> &gt; <a href="index.source.html" class="el_package">br.com.grupo99.billingservice.application.mapper</a> &gt; <span class="el_source">OrcamentoMapper.java</span></div><h1>OrcamentoMapper.java</h1><pre class="source lang-java linenums">package br.com.grupo99.billingservice.application.mapper;
+
+import br.com.grupo99.billingservice.application.dto.CreateOrcamentoRequest;
+import br.com.grupo99.billingservice.application.dto.OrcamentoResponse;
+import br.com.grupo99.billingservice.domain.model.ItemOrcamento;
+import br.com.grupo99.billingservice.domain.model.Orcamento;
+import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Mapper para converter entre Orcamento (domain) e DTOs
+ * 
+ * ✅ CLEAN ARCHITECTURE: Mapper isolado na application layer
+ */
+@Component
+<span class="fc" id="L19">public class OrcamentoMapper {</span>
+
+    /**
+     * Converte CreateOrcamentoRequest (DTO) → Orcamento (domain)
+     */
+    public Orcamento toDomain(CreateOrcamentoRequest request) {
+<span class="nc bnc" id="L25" title="All 2 branches missed.">        if (request == null) {</span>
+<span class="nc" id="L26">            return null;</span>
+        }
+
+<span class="nc" id="L29">        List&lt;ItemOrcamento&gt; itens = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">        if (request.getItens() != null) {</span>
+<span class="nc" id="L31">            request.getItens().forEach(itemReq -&gt; itens.add(ItemOrcamento.builder()</span>
+<span class="nc" id="L32">                    .descricao(itemReq.getDescricao())</span>
+<span class="nc" id="L33">                    .valorUnitario(itemReq.getValor())</span>
+<span class="nc" id="L34">                    .valorTotal(itemReq.getValor().multiply(new BigDecimal(itemReq.getQuantidade())))</span>
+<span class="nc" id="L35">                    .quantidade(itemReq.getQuantidade())</span>
+<span class="nc" id="L36">                    .build()));</span>
+        }
+
+<span class="nc" id="L39">        Orcamento orcamento = Orcamento.criar(request.getOsId(), itens);</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">        if (request.getObservacao() != null) {</span>
+<span class="nc" id="L41">            orcamento.setObservacao(request.getObservacao());</span>
+        }
+
+<span class="nc" id="L44">        return orcamento;</span>
+    }
+
+    /**
+     * Converte Orcamento (domain) → OrcamentoResponse (DTO)
+     */
+    public OrcamentoResponse toResponse(Orcamento orcamento) {
+<span class="nc bnc" id="L51" title="All 2 branches missed.">        if (orcamento == null) {</span>
+<span class="nc" id="L52">            return null;</span>
+        }
+
+<span class="nc" id="L55">        List&lt;OrcamentoResponse.ItemOrcamentoResponse&gt; itensResponse = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">        if (orcamento.getItens() != null) {</span>
+<span class="nc" id="L57">            orcamento.getItens().forEach(item -&gt; itensResponse.add(OrcamentoResponse.ItemOrcamentoResponse.builder()</span>
+<span class="nc" id="L58">                    .descricao(item.getDescricao())</span>
+<span class="nc" id="L59">                    .valor(item.getValorUnitario())</span>
+<span class="nc" id="L60">                    .quantidade(item.getQuantidade())</span>
+<span class="nc" id="L61">                    .build()));</span>
+        }
+
+<span class="nc" id="L64">        return OrcamentoResponse.builder()</span>
+<span class="nc" id="L65">                .id(orcamento.getId())</span>
+<span class="nc" id="L66">                .osId(orcamento.getOsId())</span>
+<span class="nc" id="L67">                .status(orcamento.getStatus().name())</span>
+<span class="nc" id="L68">                .valorTotal(orcamento.getValorTotal())</span>
+<span class="nc" id="L69">                .itens(itensResponse)</span>
+<span class="nc" id="L70">                .observacao(orcamento.getObservacao())</span>
+<span class="nc" id="L71">                .dataGeracao(orcamento.getDataGeracao())</span>
+<span class="nc" id="L72">                .dataAprovacao(orcamento.getDataAprovacao())</span>
+<span class="nc" id="L73">                .dataRejeicao(orcamento.getDataRejeicao())</span>
+<span class="nc" id="L74">                .historicoCount(orcamento.getHistorico().size())</span>
+<span class="nc" id="L75">                .build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

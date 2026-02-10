@@ -1,0 +1,3 @@
+br\com\grupo99\notificacao\application\service\NotificacaoApplicationServiceTest.class
+br\com\grupo99\notificacao\adapter\config\TestConfig.class
+br\com\grupo99\notificacao\adapter\web\NotificacaoControllerTest.class

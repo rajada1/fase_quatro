@@ -1,0 +1,7 @@
+br\com\grupo99\osservice\bdd\CucumberTest.class
+br\com\grupo99\osservice\infrastructure\messaging\KafkaEventPublisherTest.class
+br\com\grupo99\osservice\bdd\OrdemServicoSteps.class
+br\com\grupo99\osservice\domain\model\OrdemServicoTest.class
+br\com\grupo99\osservice\domain\model\StatusOSTest.class
+br\com\grupo99\osservice\bdd\SagaPatternSteps.class
+br\com\grupo99\osservice\infrastructure\repository\OrdemServicoRepositoryTest.class

@@ -1,0 +1,48 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< br.com.grupo99:execution-service >------------------
+[INFO] Building execution-service 1.0.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ execution-service ---
+[INFO] Deleting C:\Users\Meu Computador\OneDrive\┴rea de Trabalho\FIAP\projeto\fase_quatro\oficina-execution-service\target
+[INFO] 
+[INFO] --- jacoco:0.8.11:prepare-agent (default) @ execution-service ---
+[INFO] argLine set to "-javaagent:C:\\Users\\Meu Computador\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.11\\org.jacoco.agent-0.8.11-runtime.jar=destfile=C:\\Users\\Meu Computador\\OneDrive\\┴rea de Trabalho\\FIAP\\projeto\\fase_quatro\\oficina-execution-service\\target\\jacoco.exec,excludes=**/*Application.class:**/domain/repository/*.class:**/infrastructure/messaging/*.class:**/infrastructure/config/*.class"
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ execution-service ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 6 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ execution-service ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 41 source files with javac [debug release 21] to target\classes
+[INFO] /C:/Users/Meu Computador/OneDrive/┴rea de Trabalho/FIAP/projeto/fase_quatro/oficina-execution-service/src/main/java/br/com/grupo99/executionservice/application/dto/DiagnosticoRequestDTO.java: Some input files use or override a deprecated API.
+[INFO] /C:/Users/Meu Computador/OneDrive/┴rea de Trabalho/FIAP/projeto/fase_quatro/oficina-execution-service/src/main/java/br/com/grupo99/executionservice/application/dto/DiagnosticoRequestDTO.java: Recompile with -Xlint:deprecation for details.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ execution-service ---
+[INFO] Copying 2 resources from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ execution-service ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 4 source files with javac [debug release 21] to target\test-classes
+[INFO] 
+[INFO] --- surefire:3.0.0:test (default-test) @ execution-service ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- jacoco:0.8.11:report (report) @ execution-service ---
+[INFO] Skipping JaCoCo execution due to missing execution data file.
+[INFO] 
+[INFO] --- jar:3.4.2:jar (default-jar) @ execution-service ---
+[INFO] Building jar: C:\Users\Meu Computador\OneDrive\┴rea de Trabalho\FIAP\projeto\fase_quatro\oficina-execution-service\target\execution-service-1.0.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- spring-boot:3.3.13:repackage (repackage) @ execution-service ---
+[INFO] Replacing main artifact C:\Users\Meu Computador\OneDrive\┴rea de Trabalho\FIAP\projeto\fase_quatro\oficina-execution-service\target\execution-service-1.0.0-SNAPSHOT.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] The original artifact has been renamed to C:\Users\Meu Computador\OneDrive\┴rea de Trabalho\FIAP\projeto\fase_quatro\oficina-execution-service\target\execution-service-1.0.0-SNAPSHOT.jar.original
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  13.368 s
+[INFO] Finished at: 2026-02-01T19:15:45-03:00
+[INFO] ------------------------------------------------------------------------

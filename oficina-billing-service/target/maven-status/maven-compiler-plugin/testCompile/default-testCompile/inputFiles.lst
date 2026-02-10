@@ -1,0 +1,6 @@
+C:\Users\Meu Computador\OneDrive\Área de Trabalho\FIAP\projeto\fase_quatro\oficina-billing-service\src\test\java\br\com\grupo99\billingservice\bdd\CucumberTest.java
+C:\Users\Meu Computador\OneDrive\Área de Trabalho\FIAP\projeto\fase_quatro\oficina-billing-service\src\test\java\br\com\grupo99\billingservice\infrastructure\messaging\KafkaBillingEventPublisherTest.java
+C:\Users\Meu Computador\OneDrive\Área de Trabalho\FIAP\projeto\fase_quatro\oficina-billing-service\src\test\java\br\com\grupo99\billingservice\infrastructure\repository\OrcamentoRepositoryTest.java
+C:\Users\Meu Computador\OneDrive\Área de Trabalho\FIAP\projeto\fase_quatro\oficina-billing-service\src\test\java\br\com\grupo99\billingservice\domain\model\PagamentoTest.java
+C:\Users\Meu Computador\OneDrive\Área de Trabalho\FIAP\projeto\fase_quatro\oficina-billing-service\src\test\java\br\com\grupo99\billingservice\domain\model\OrcamentoTest.java
+C:\Users\Meu Computador\OneDrive\Área de Trabalho\FIAP\projeto\fase_quatro\oficina-billing-service\src\test\java\br\com\grupo99\billingservice\bdd\SagaOrcamentoSteps.java

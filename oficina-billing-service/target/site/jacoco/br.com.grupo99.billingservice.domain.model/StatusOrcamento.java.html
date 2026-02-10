@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StatusOrcamento.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">billing-service</a> &gt; <a href="index.source.html" class="el_package">br.com.grupo99.billingservice.domain.model</a> &gt; <span class="el_source">StatusOrcamento.java</span></div><h1>StatusOrcamento.java</h1><pre class="source lang-java linenums">package br.com.grupo99.billingservice.domain.model;
+
+import lombok.Getter;
+
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * Enum representando os possíveis status de um Orçamento.
+ * Garante transições válidas de estado.
+ */
+<span class="fc" id="L12">@Getter</span>
+public enum StatusOrcamento {
+
+<span class="fc" id="L15">    PENDENTE(&quot;Pendente aprovação do cliente&quot;),</span>
+<span class="fc" id="L16">    APROVADO(&quot;Aprovado pelo cliente&quot;),</span>
+<span class="fc" id="L17">    REJEITADO(&quot;Rejeitado pelo cliente&quot;),</span>
+<span class="fc" id="L18">    CANCELADO(&quot;Cancelado&quot;);</span>
+
+    private final String descricao;
+
+<span class="fc" id="L22">    StatusOrcamento(String descricao) {</span>
+<span class="fc" id="L23">        this.descricao = descricao;</span>
+<span class="fc" id="L24">    }</span>
+
+    /**
+     * Valida se uma transição de status é permitida.
+     *
+     * @param novoStatus status destino
+     * @return true se transição é válida
+     */
+    public boolean podeTransicionarPara(StatusOrcamento novoStatus) {
+<span class="fc bfc" id="L33" title="All 2 branches covered.">        return switch (this) {</span>
+<span class="pc bpc" id="L34" title="1 of 6 branches missed.">            case PENDENTE -&gt; novoStatus == APROVADO || novoStatus == REJEITADO || novoStatus == CANCELADO;</span>
+<span class="fc" id="L35">            case APROVADO, REJEITADO, CANCELADO -&gt; false; // Estados finais</span>
+        };
+    }
+
+    /**
+     * Retorna os próximos status possíveis a partir do status atual.
+     *
+     * @return lista de status válidos
+     */
+    public List&lt;StatusOrcamento&gt; proximosStatusPermitidos() {
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L46">            case PENDENTE -&gt; Arrays.asList(APROVADO, REJEITADO, CANCELADO);</span>
+<span class="nc" id="L47">            case APROVADO, REJEITADO, CANCELADO -&gt; List.of();</span>
+        };
+    }
+
+    /**
+     * Verifica se o status é final (não permite mais transições).
+     *
+     * @return true se é um status final
+     */
+    public boolean isFinal() {
+<span class="nc bnc" id="L57" title="All 6 branches missed.">        return this == APROVADO || this == REJEITADO || this == CANCELADO;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

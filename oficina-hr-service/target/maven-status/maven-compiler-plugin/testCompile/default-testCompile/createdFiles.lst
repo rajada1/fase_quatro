@@ -1,0 +1,4 @@
+br\com\grupo99\hrservice\application\service\FuncionarioApplicationServiceTest.class
+br\com\grupo99\hrservice\config\TestConfig.class
+br\com\grupo99\hrservice\config\BddTestConfiguration.class
+br\com\grupo99\hrservice\adapter\controller\FuncionarioControllerTest.class

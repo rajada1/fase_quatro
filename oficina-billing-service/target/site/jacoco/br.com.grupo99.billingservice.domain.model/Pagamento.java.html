@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Pagamento.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">billing-service</a> &gt; <a href="index.source.html" class="el_package">br.com.grupo99.billingservice.domain.model</a> &gt; <span class="el_source">Pagamento.java</span></div><h1>Pagamento.java</h1><pre class="source lang-java linenums">package br.com.grupo99.billingservice.domain.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.UUID;
+
+/**
+ * Aggregate Root representando um Pagamento.
+ * 
+ * ✅ CLEAN ARCHITECTURE: Domain sem dependências externas (sem Spring Data)
+ */
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Pagamento {
+
+    private UUID id;
+
+    private UUID orcamentoId;
+
+    private UUID osId;
+
+    @Builder.Default
+    private StatusPagamento status = StatusPagamento.PENDENTE;
+
+    private BigDecimal valor;
+
+    private FormaPagamento formaPagamento;
+
+    private String comprovante; // ID/Hash do comprovante de pagamento
+
+    private Instant dataPagamento;
+
+    private Instant dataEstorno;
+
+    private String motivoEstorno;
+
+    private Instant createdAt;
+
+    private Instant updatedAt;
+
+    /**
+     * Factory method para criar novo pagamento.
+     *
+     * @param orcamentoId    ID do orçamento
+     * @param osId           ID da OS
+     * @param valor          valor a ser pago
+     * @param formaPagamento forma de pagamento
+     * @param comprovante    comprovante
+     * @return novo Pagamento
+     */
+    public static Pagamento criar(
+            UUID orcamentoId,
+            UUID osId,
+            BigDecimal valor,
+            FormaPagamento formaPagamento,
+            String comprovante) {
+
+<span class="nc" id="L65">        return Pagamento.builder()</span>
+<span class="nc" id="L66">                .id(UUID.randomUUID())</span>
+<span class="nc" id="L67">                .orcamentoId(orcamentoId)</span>
+<span class="nc" id="L68">                .osId(osId)</span>
+<span class="nc" id="L69">                .status(StatusPagamento.PENDENTE)</span>
+<span class="nc" id="L70">                .valor(valor)</span>
+<span class="nc" id="L71">                .formaPagamento(formaPagamento)</span>
+<span class="nc" id="L72">                .comprovante(comprovante)</span>
+<span class="nc" id="L73">                .build();</span>
+    }
+
+    /**
+     * Factory method para criar novo pagamento (sobrecarga para testes).
+     *
+     * @param orcamentoId    ID do orçamento
+     * @param osId           ID da OS
+     * @param valor          valor a ser pago
+     * @param formaPagamento forma de pagamento
+     * @return novo Pagamento
+     */
+    public static Pagamento criar(
+            UUID orcamentoId,
+            UUID osId,
+            BigDecimal valor,
+            FormaPagamento formaPagamento) {
+
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        if (orcamentoId == null) {</span>
+<span class="fc" id="L92">            throw new IllegalArgumentException(&quot;ID do orçamento é obrigatório&quot;);</span>
+        }
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        if (osId == null) {</span>
+<span class="fc" id="L95">            throw new IllegalArgumentException(&quot;ID da OS é obrigatório&quot;);</span>
+        }
+<span class="fc bfc" id="L97" title="All 4 branches covered.">        if (valor == null || valor.compareTo(BigDecimal.ZERO) &lt;= 0) {</span>
+<span class="fc" id="L98">            throw new IllegalArgumentException(&quot;Valor deve ser maior que zero&quot;);</span>
+        }
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        if (formaPagamento == null) {</span>
+<span class="fc" id="L101">            throw new IllegalArgumentException(&quot;Forma de pagamento é obrigatória&quot;);</span>
+        }
+
+<span class="fc" id="L104">        return Pagamento.builder()</span>
+<span class="fc" id="L105">                .id(UUID.randomUUID())</span>
+<span class="fc" id="L106">                .orcamentoId(orcamentoId)</span>
+<span class="fc" id="L107">                .osId(osId)</span>
+<span class="fc" id="L108">                .status(StatusPagamento.PENDENTE)</span>
+<span class="fc" id="L109">                .valor(valor)</span>
+<span class="fc" id="L110">                .formaPagamento(formaPagamento)</span>
+<span class="fc" id="L111">                .build();</span>
+    }
+
+    /**
+     * Retorna o orcamentoId.
+     *
+     * @return UUID do orçamento
+     */
+    public UUID getOrcamentoIdValue() {
+<span class="nc" id="L120">        return this.orcamentoId;</span>
+    }
+
+    /**
+     * Retorna o osId.
+     *
+     * @return UUID da OS
+     */
+    public UUID getOsIdValue() {
+<span class="nc" id="L129">        return this.osId;</span>
+    }
+
+    /**
+     * Confirma o pagamento.
+     *
+     * @throws IllegalStateException se transição não for válida
+     */
+    public void confirmar() {
+<span class="fc" id="L138">        validarTransicao(StatusPagamento.CONFIRMADO);</span>
+
+<span class="fc" id="L140">        this.status = StatusPagamento.CONFIRMADO;</span>
+<span class="fc" id="L141">        this.dataPagamento = Instant.now();</span>
+<span class="fc" id="L142">    }</span>
+
+    /**
+     * Estorna o pagamento.
+     *
+     * @param motivo motivo do estorno
+     * @throws IllegalStateException se transição não for válida
+     */
+    public void estornar(String motivo) {
+<span class="fc" id="L151">        validarTransicao(StatusPagamento.ESTORNADO);</span>
+
+<span class="fc" id="L153">        this.status = StatusPagamento.ESTORNADO;</span>
+<span class="fc" id="L154">        this.dataEstorno = Instant.now();</span>
+<span class="fc" id="L155">        this.motivoEstorno = motivo;</span>
+<span class="fc" id="L156">    }</span>
+
+    /**
+     * Estorna o pagamento (sobrecarga para testes sem motivo explícito).
+     *
+     * @throws IllegalStateException se transição não for válida
+     */
+    public void estornar() {
+<span class="fc" id="L164">        estornar(&quot;Estorno solicitado&quot;);</span>
+<span class="fc" id="L165">    }</span>
+
+    /**
+     * Cancela o pagamento.
+     *
+     * @throws IllegalStateException se transição não for válida
+     */
+    public void cancelar() {
+<span class="nc" id="L173">        validarTransicao(StatusPagamento.CANCELADO);</span>
+
+<span class="nc" id="L175">        this.status = StatusPagamento.CANCELADO;</span>
+<span class="nc" id="L176">    }</span>
+
+    /**
+     * Valida se a transição de status é permitida.
+     *
+     * @param novoStatus novo status desejado
+     * @throws IllegalStateException se transição não for válida
+     */
+    private void validarTransicao(StatusPagamento novoStatus) {
+<span class="fc bfc" id="L185" title="All 2 branches covered.">        if (!this.status.podeTransicionarPara(novoStatus)) {</span>
+<span class="fc" id="L186">            throw new IllegalStateException(</span>
+<span class="fc" id="L187">                    String.format(&quot;Transição inválida de %s para %s&quot;, this.status, novoStatus));</span>
+        }
+<span class="fc" id="L189">    }</span>
+
+    /**
+     * Verifica se o pagamento está confirmado.
+     *
+     * @return true se status é CONFIRMADO
+     */
+    public boolean isConfirmado() {
+<span class="nc bnc" id="L197" title="All 2 branches missed.">        return this.status == StatusPagamento.CONFIRMADO;</span>
+    }
+
+    /**
+     * Verifica se o pagamento está pendente.
+     *
+     * @return true se status é PENDENTE
+     */
+    public boolean isPendente() {
+<span class="nc bnc" id="L206" title="All 2 branches missed.">        return this.status == StatusPagamento.PENDENTE;</span>
+    }
+
+    /**
+     * Retorna a data de criação (createdAt).
+     *
+     * @return data de criação
+     */
+    public Instant getDataCriacao() {
+<span class="nc" id="L215">        return this.createdAt;</span>
+    }
+
+    /**
+     * Retorna a data de confirmação (dataPagamento).
+     *
+     * @return data de confirmação do pagamento
+     */
+    public Instant getDataConfirmacao() {
+<span class="fc" id="L224">        return this.dataPagamento;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

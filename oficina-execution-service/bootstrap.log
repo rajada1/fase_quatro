@@ -1,0 +1,82 @@
+[INFO] Error stacktraces are turned on.
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< br.com.grupo99:execution-service >------------------
+[INFO] Building execution-service 1.0.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- jacoco:0.8.11:prepare-agent (default) @ execution-service ---
+[INFO] argLine set to "-javaagent:C:\\Users\\Meu Computador\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.11\\org.jacoco.agent-0.8.11-runtime.jar=destfile=C:\\Users\\Meu Computador\\OneDrive\\┴rea de Trabalho\\FIAP\\projeto\\fase_quatro\\oficina-execution-service\\target\\jacoco.exec,excludes=**/*Application.class:**/domain/repository/*.class:**/infrastructure/messaging/*.class:**/infrastructure/config/*.class"
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ execution-service ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 6 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ execution-service ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ execution-service ---
+[INFO] Copying 3 resources from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ execution-service ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- surefire:3.0.0:test (default-test) @ execution-service ---
+[INFO] Surefire report directory: C:\Users\Meu Computador\OneDrive\┴rea de Trabalho\FIAP\projeto\fase_quatro\oficina-execution-service\target\surefire-reports
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running br.com.grupo99.executionservice.bdd.BootstrapTest
+{"timestamp":"2026-02-01T20:11:56.7155753-03:00","@version":"1","message":"Could not detect default configuration classes for test class [br.com.grupo99.executionservice.bdd.BootstrapTest]: BootstrapTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.","logger":"org.springframework.test.context.support.AnnotationConfigContextLoaderUtils","thread":"main","level":"INFO","level_value":20000}
+{"timestamp":"2026-02-01T20:11:57.3594304-03:00","@version":"1","message":"Found @SpringBootConfiguration br.com.grupo99.executionservice.ExecutionServiceApplication for test class br.com.grupo99.executionservice.bdd.BootstrapTest","logger":"org.springframework.boot.test.context.SpringBootTestContextBootstrapper","thread":"main","level":"INFO","level_value":20000}
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::               (v3.3.13)
+
+{"timestamp":"2026-02-01T20:11:59.3061111-03:00","@version":"1","message":"Starting BootstrapTest using Java 21.0.9 with PID 2656 (started by Meu Computador in C:\\Users\\Meu Computador\\OneDrive\\┴rea de Trabalho\\FIAP\\projeto\\fase_quatro\\oficina-execution-service)","logger":"br.com.grupo99.executionservice.bdd.BootstrapTest","thread":"main","level":"INFO","level_value":20000}
+{"timestamp":"2026-02-01T20:11:59.3077053-03:00","@version":"1","message":"The following 1 profile is active: \"test\"","logger":"br.com.grupo99.executionservice.bdd.BootstrapTest","thread":"main","level":"INFO","level_value":20000}
+{"timestamp":"2026-02-01T20:12:05.9773822-03:00","@version":"1","message":"Flyway upgrade recommended: H2 2.2.224 is newer than this version of Flyway and support has not been tested. The latest supported version of H2 is 2.2.220.","logger":"org.flywaydb.core.internal.database.base.Database","thread":"main","level":"WARN","level_value":30000}
+{"timestamp":"2026-02-01T20:12:07.7321549-03:00","@version":"1","message":"HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)","logger":"org.hibernate.orm.deprecation","thread":"main","level":"WARN","level_value":30000}
+{"timestamp":"2026-02-01T20:12:10.700072-03:00","@version":"1","message":"\r\n    drop table if exists diagnosticos cascade ","logger":"org.hibernate.SQL","thread":"main","level":"DEBUG","level_value":10000}
+{"timestamp":"2026-02-01T20:12:10.703613-03:00","@version":"1","message":"\r\n    drop table if exists execucoes_os cascade ","logger":"org.hibernate.SQL","thread":"main","level":"DEBUG","level_value":10000}
+{"timestamp":"2026-02-01T20:12:10.7061287-03:00","@version":"1","message":"\r\n    drop table if exists tarefas cascade ","logger":"org.hibernate.SQL","thread":"main","level":"DEBUG","level_value":10000}
+{"timestamp":"2026-02-01T20:12:10.7086597-03:00","@version":"1","message":"\r\n    drop table if exists uso_pecas cascade ","logger":"org.hibernate.SQL","thread":"main","level":"DEBUG","level_value":10000}
+{"timestamp":"2026-02-01T20:12:10.7241852-03:00","@version":"1","message":"\r\n    create table diagnosticos (\r\n        created_at timestamp(6) with time zone not null,\r\n        data_diagnostico timestamp(6) with time zone not null,\r\n        execucao_id UUID not null,\r\n        id UUID not null,\r\n        mecanico varchar(100) not null,\r\n        descricao TEXT not null,\r\n        observacoes TEXT,\r\n        primary key (id)\r\n    )","logger":"org.hibernate.SQL","thread":"main","level":"DEBUG","level_value":10000}
+{"timestamp":"2026-02-01T20:12:10.729568-03:00","@version":"1","message":"\r\n    create table execucoes_os (\r\n        created_at timestamp(6) with time zone not null,\r\n        data_finalizacao timestamp(6) with time zone,\r\n        data_inicio timestamp(6) with time zone not null,\r\n        updated_at timestamp(6) with time zone not null,\r\n        version bigint,\r\n        id UUID not null,\r\n        orcamento_id UUID not null,\r\n        os_id UUID not null unique,\r\n        mecanico varchar(100) not null,\r\n        observacoes TEXT,\r\n        status enum ('AGUARDANDO_INICIO','CANCELADA','CONCLUIDA','EM_ANDAMENTO') not null,\r\n        primary key (id)\r\n    )","logger":"org.hibernate.SQL","thread":"main","level":"DEBUG","level_value":10000}
+{"timestamp":"2026-02-01T20:12:10.7338507-03:00","@version":"1","message":"\r\n    create table tarefas (\r\n        tempo_estimado_minutos integer,\r\n        tempo_real_minutos integer,\r\n        created_at timestamp(6) with time zone not null,\r\n        data_finalizacao timestamp(6) with time zone,\r\n        data_inicio timestamp(6) with time zone not null,\r\n        execucao_id UUID not null,\r\n        id UUID not null,\r\n        mecanico varchar(100) not null,\r\n        descricao varchar(200) not null,\r\n        status enum ('CANCELADA','CONCLUIDA','EM_ANDAMENTO','PENDENTE') not null,\r\n        primary key (id)\r\n    )","logger":"org.hibernate.SQL","thread":"main","level":"DEBUG","level_value":10000}
+{"timestamp":"2026-02-01T20:12:10.7368802-03:00","@version":"1","message":"\r\n    create table uso_pecas (\r\n        quantidade integer not null,\r\n        valor_total numeric(10,2) not null,\r\n        valor_unitario numeric(10,2) not null,\r\n        created_at timestamp(6) with time zone not null,\r\n        data_uso timestamp(6) with time zone not null,\r\n        execucao_id UUID not null,\r\n        id UUID not null,\r\n        peca_id UUID not null,\r\n        descricao varchar(200) not null,\r\n        primary key (id)\r\n    )","logger":"org.hibernate.SQL","thread":"main","level":"DEBUG","level_value":10000}
+{"timestamp":"2026-02-01T20:12:10.7386109-03:00","@version":"1","message":"\r\n    alter table if exists diagnosticos \r\n       add constraint FKmjovv20vi2qh9oxpf29j25u49 \r\n       foreign key (execucao_id) \r\n       references execucoes_os","logger":"org.hibernate.SQL","thread":"main","level":"DEBUG","level_value":10000}
+{"timestamp":"2026-02-01T20:12:10.7491443-03:00","@version":"1","message":"\r\n    alter table if exists tarefas \r\n       add constraint FKoe69cvqyrx7749otdwnjadlt7 \r\n       foreign key (execucao_id) \r\n       references execucoes_os","logger":"org.hibernate.SQL","thread":"main","level":"DEBUG","level_value":10000}
+{"timestamp":"2026-02-01T20:12:10.7527887-03:00","@version":"1","message":"\r\n    alter table if exists uso_pecas \r\n       add constraint FKgsxtaqq135tpj9hxrkmx2b4l1 \r\n       foreign key (execucao_id) \r\n       references execucoes_os","logger":"org.hibernate.SQL","thread":"main","level":"DEBUG","level_value":10000}
+{"timestamp":"2026-02-01T20:12:13.9081699-03:00","@version":"1","message":"spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning","logger":"org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration","thread":"main","level":"WARN","level_value":30000}
+{"timestamp":"2026-02-01T20:12:15.7745773-03:00","@version":"1","message":"Started BootstrapTest in 17.634 seconds (process running for 23.492)","logger":"br.com.grupo99.executionservice.bdd.BootstrapTest","thread":"main","level":"INFO","level_value":20000}
+Java HotSpot(TM) 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+WARNING: A Java agent has been loaded dynamically (C:\Users\Meu Computador\.m2\repository\net\bytebuddy\byte-buddy-agent\1.14.19\byte-buddy-agent-1.14.19.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 22.768 s - in br.com.grupo99.executionservice.bdd.BootstrapTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- jacoco:0.8.11:report (report) @ execution-service ---
+[INFO] Loading execution data file C:\Users\Meu Computador\OneDrive\┴rea de Trabalho\FIAP\projeto\fase_quatro\oficina-execution-service\target\jacoco.exec
+[INFO] Analyzed bundle 'execution-service' with 25 classes
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  33.943 s
+[INFO] Finished at: 2026-02-01T20:12:21-03:00
+[INFO] ------------------------------------------------------------------------

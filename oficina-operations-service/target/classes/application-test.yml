@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: operations-service
+
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;INIT=CREATE SCHEMA IF NOT EXISTS public
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+
+  flyway:
+    enabled: false
+
+security:
+  disabled: true
+
+jwt:
+  secret: base64EncodedSecretKeyWithMinimumOf256BitsForHS256SigningAlgorithm
+  expiration:
+    ms: 3600000
+
+server:
+  port: 8089
+
+logging:
+  level:
+    root: WARN
+    br.com.grupo99.operationsservice: INFO

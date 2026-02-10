@@ -1,0 +1,153 @@
+# =============================================================================
+# Docker Compose - LocalStack para Testes Locais
+# Sistema de Gestão de Oficina Mecânica - Grupo 99
+# =============================================================================
+# 
+# Este arquivo configura o ambiente local com LocalStack para simular
+# os serviços AWS (SQS) utilizados pelos microserviços.
+#
+# Uso:
+#   docker-compose -f docker-compose.localstack.yml up -d
+#
+# Para verificar as filas criadas:
+#   aws --endpoint-url=http://localhost:4566 sqs list-queues
+#
+# =============================================================================
+
+version: '3.8'
+
+services:
+  # =========================================================================
+  # LocalStack - Emulador de Serviços AWS
+  # =========================================================================
+  localstack:
+    image: localstack/localstack:3.0
+    container_name: oficina-localstack
+    ports:
+      - "4566:4566"           # Gateway principal
+      - "4510-4559:4510-4559" # Portas de serviços externos
+    environment:
+      # Serviços habilitados
+      SERVICES: sqs,sns
+      
+      # Configurações gerais
+      DEBUG: ${DEBUG:-0}
+      PERSISTENCE: 1
+      
+      # AWS
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      
+      # Docker
+      DOCKER_HOST: unix:///var/run/docker.sock
+    volumes:
+      - localstack_data:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./localstack/init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh:ro
+    networks:
+      - oficina-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # =========================================================================
+  # PostgreSQL - Banco de dados relacional
+  # =========================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: oficina-postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+      POSTGRES_MULTIPLE_DATABASES: os_db,execution_db,customer_db,people_db,hr_db,catalog_db,maintenance_db,notification_db,operations_db
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./localstack/init-postgres.sh:/docker-entrypoint-initdb.d/init-postgres.sh:ro
+    networks:
+      - oficina-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # =========================================================================
+  # MongoDB - Banco de dados para Billing Service
+  # =========================================================================
+  mongodb:
+    image: mongo:7.0
+    container_name: oficina-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: billing_db
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - oficina-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # =========================================================================
+  # Adminer - Interface web para PostgreSQL
+  # =========================================================================
+  adminer:
+    image: adminer:latest
+    container_name: oficina-adminer
+    ports:
+      - "8090:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    networks:
+      - oficina-network
+    depends_on:
+      - postgres
+
+  # =========================================================================
+  # Mongo Express - Interface web para MongoDB
+  # =========================================================================
+  mongo-express:
+    image: mongo-express:latest
+    container_name: oficina-mongo-express
+    ports:
+      - "8091:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: admin123
+      ME_CONFIG_MONGODB_URL: mongodb://admin:admin123@mongodb:27017/
+      ME_CONFIG_BASICAUTH: false
+    networks:
+      - oficina-network
+    depends_on:
+      - mongodb
+
+# =============================================================================
+# Volumes
+# =============================================================================
+volumes:
+  localstack_data:
+    driver: local
+  postgres_data:
+    driver: local
+  mongodb_data:
+    driver: local
+
+# =============================================================================
+# Networks
+# =============================================================================
+networks:
+  oficina-network:
+    driver: bridge
+    name: oficina-network

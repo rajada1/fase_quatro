@@ -1,0 +1,16 @@
+/.mvn
+/target
+/logs
+.DS_Store
+*.log
+*.swp
+*.swo
+*~
+.env
+.env.local
+.env.*.local
+/.idea
+/.vscode
+*.iml
+*.iws
+*.ipr

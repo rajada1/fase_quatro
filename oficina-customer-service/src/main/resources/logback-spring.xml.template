@@ -1,0 +1,10 @@
+logging:
+  level:
+    root: INFO
+    br.com.grupo99.customerservice: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg%n"
+  file:
+    name: logs/customer-service.log
+    max-size: 10MB
+    max-history: 10

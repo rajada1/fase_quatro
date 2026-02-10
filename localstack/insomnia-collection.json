@@ -1,0 +1,655 @@
+{
+    "_type": "export",
+    "__export_format": 4,
+    "__export_date": "2026-02-09T22:00:00.000Z",
+    "__export_source": "insomnia.desktop.app:v2023.5.8",
+    "resources": [
+        {
+            "_id": "wrk_oficina_localstack",
+            "parentId": null,
+            "_type": "workspace",
+            "name": "Oficina Microservices - LocalStack",
+            "description": "Collection completa para testes locais dos 10 microserviços com LocalStack",
+            "scope": "collection"
+        },
+        {
+            "_id": "env_base",
+            "parentId": "wrk_oficina_localstack",
+            "_type": "environment",
+            "name": "Base Environment",
+            "data": {}
+        },
+        {
+            "_id": "env_local",
+            "parentId": "env_base",
+            "_type": "environment",
+            "name": "Local (LocalStack)",
+            "data": {
+                "baseUrl": "http://localhost",
+                "lambdaAuthPort": "3000",
+                "peoplePort": "8081",
+                "customerPort": "8082",
+                "catalogPort": "8083",
+                "hrPort": "8084",
+                "osPort": "8085",
+                "billingPort": "8086",
+                "executionPort": "8087",
+                "maintenancePort": "8088",
+                "notificationPort": "8089",
+                "operationsPort": "8092",
+                "localstackEndpoint": "http://localhost:4566"
+            },
+            "color": "#7d69cb"
+        },
+        {
+            "_id": "fld_lambda_auth",
+            "parentId": "wrk_oficina_localstack",
+            "_type": "request_group",
+            "name": "🔐 Lambda Auth Service (3000)",
+            "description": "Autenticação e geração de JWT Token - EXECUTE PRIMEIRO",
+            "metaSortKey": -1100
+        },
+        {
+            "_id": "req_auth_login",
+            "parentId": "fld_lambda_auth",
+            "_type": "request",
+            "name": "1. Autenticar (CPF)",
+            "url": "{{ _.baseUrl }}:{{ _.lambdaAuthPort }}/auth",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"cpf\": \"11144477735\"\n}"
+            },
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ]
+        },
+        {
+            "_id": "req_auth_login_cnpj",
+            "parentId": "fld_lambda_auth",
+            "_type": "request",
+            "name": "2. Autenticar (CNPJ)",
+            "url": "{{ _.baseUrl }}:{{ _.lambdaAuthPort }}/auth",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"cpf\": \"11222333000181\"\n}"
+            },
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ]
+        },
+        {
+            "_id": "fld_people_service",
+            "parentId": "wrk_oficina_localstack",
+            "_type": "request_group",
+            "name": "👤 People Service (8081)",
+            "description": "Endpoints do serviço de Pessoas",
+            "metaSortKey": -1000
+        },
+        {
+            "_id": "req_people_health",
+            "parentId": "fld_people_service",
+            "_type": "request",
+            "name": "Health Check",
+            "url": "{{ _.baseUrl }}:{{ _.peoplePort }}/actuator/health",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_people_list",
+            "parentId": "fld_people_service",
+            "_type": "request",
+            "name": "Listar Pessoas",
+            "url": "{{ _.baseUrl }}:{{ _.peoplePort }}/api/v1/pessoas",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_people_create",
+            "parentId": "fld_people_service",
+            "_type": "request",
+            "name": "Criar Pessoa",
+            "url": "{{ _.baseUrl }}:{{ _.peoplePort }}/api/v1/pessoas",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"name\": \"João Silva\",\n  \"numeroDocumento\": \"12345678901\",\n  \"tipoPessoa\": \"PESSOA_FISICA\",\n  \"email\": \"joao.silva@email.com\",\n  \"phone\": \"11999998888\",\n  \"perfil\": \"CLIENTE\"\n}"
+            },
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ]
+        },
+        {
+            "_id": "req_people_get_by_id",
+            "parentId": "fld_people_service",
+            "_type": "request",
+            "name": "Buscar Pessoa por ID",
+            "url": "{{ _.baseUrl }}:{{ _.peoplePort }}/api/v1/pessoas/1",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "fld_customer_service",
+            "parentId": "wrk_oficina_localstack",
+            "_type": "request_group",
+            "name": "🚗 Customer Service (8082)",
+            "description": "Endpoints do serviço de Clientes e Veículos",
+            "metaSortKey": -900
+        },
+        {
+            "_id": "req_customer_health",
+            "parentId": "fld_customer_service",
+            "_type": "request",
+            "name": "Health Check",
+            "url": "{{ _.baseUrl }}:{{ _.customerPort }}/actuator/health",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_customer_list",
+            "parentId": "fld_customer_service",
+            "_type": "request",
+            "name": "Listar Clientes",
+            "url": "{{ _.baseUrl }}:{{ _.customerPort }}/api/v1/clientes",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_customer_create",
+            "parentId": "fld_customer_service",
+            "_type": "request",
+            "name": "Criar Cliente",
+            "url": "{{ _.baseUrl }}:{{ _.customerPort }}/api/v1/clientes",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"pessoaId\": \"00000000-0000-0000-0000-000000000001\"\n}"
+            },
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ]
+        },
+        {
+            "_id": "req_customer_get_by_id",
+            "parentId": "fld_customer_service",
+            "_type": "request",
+            "name": "Buscar Cliente por ID",
+            "url": "{{ _.baseUrl }}:{{ _.customerPort }}/api/v1/clientes/00000000-0000-0000-0000-000000000001",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_veiculo_list",
+            "parentId": "fld_customer_service",
+            "_type": "request",
+            "name": "Listar Veículos do Cliente",
+            "url": "{{ _.baseUrl }}:{{ _.customerPort }}/api/v1/clientes/00000000-0000-0000-0000-000000000001/veiculos",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_veiculo_create",
+            "parentId": "fld_customer_service",
+            "_type": "request",
+            "name": "Criar Veículo",
+            "url": "{{ _.baseUrl }}:{{ _.customerPort }}/api/v1/clientes/00000000-0000-0000-0000-000000000001/veiculos",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"placa\": \"ABC1234\",\n  \"marca\": \"Toyota\",\n  \"modelo\": \"Corolla\",\n  \"ano\": 2023,\n  \"renavam\": \"12345678901\",\n  \"cor\": \"Prata\",\n  \"chassi\": \"9BRBLWHEXG0000001\"\n}"
+            },
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ]
+        },
+        {
+            "_id": "fld_catalog_service",
+            "parentId": "wrk_oficina_localstack",
+            "_type": "request_group",
+            "name": "🔩 Catalog Service (8083)",
+            "description": "Endpoints do serviço de Catálogo (Peças e Serviços)",
+            "metaSortKey": -800
+        },
+        {
+            "_id": "req_catalog_health",
+            "parentId": "fld_catalog_service",
+            "_type": "request",
+            "name": "Health Check",
+            "url": "{{ _.baseUrl }}:{{ _.catalogPort }}/actuator/health",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_pecas_list",
+            "parentId": "fld_catalog_service",
+            "_type": "request",
+            "name": "Listar Peças",
+            "url": "{{ _.baseUrl }}:{{ _.catalogPort }}/api/v1/pecas",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_pecas_create",
+            "parentId": "fld_catalog_service",
+            "_type": "request",
+            "name": "Criar Peça",
+            "url": "{{ _.baseUrl }}:{{ _.catalogPort }}/api/v1/pecas",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"codigo\": \"PEC001\",\n  \"nome\": \"Filtro de Óleo\",\n  \"descricao\": \"Filtro de óleo para motor 1.8\",\n  \"preco\": 45.90,\n  \"quantidadeEstoque\": 100,\n  \"categoria\": \"FILTROS\"\n}"
+            },
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ]
+        },
+        {
+            "_id": "req_servicos_list",
+            "parentId": "fld_catalog_service",
+            "_type": "request",
+            "name": "Listar Serviços",
+            "url": "{{ _.baseUrl }}:{{ _.catalogPort }}/api/v1/servicos",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_servicos_create",
+            "parentId": "fld_catalog_service",
+            "_type": "request",
+            "name": "Criar Serviço",
+            "url": "{{ _.baseUrl }}:{{ _.catalogPort }}/api/v1/servicos",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"codigo\": \"SRV001\",\n  \"nome\": \"Troca de Óleo\",\n  \"descricao\": \"Troca de óleo do motor com filtro\",\n  \"preco\": 120.00,\n  \"tempoEstimado\": 30,\n  \"categoria\": \"MANUTENCAO\"\n}"
+            },
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ]
+        },
+        {
+            "_id": "fld_hr_service",
+            "parentId": "wrk_oficina_localstack",
+            "_type": "request_group",
+            "name": "👷 HR Service (8084)",
+            "description": "Endpoints do serviço de Recursos Humanos",
+            "metaSortKey": -700
+        },
+        {
+            "_id": "req_hr_health",
+            "parentId": "fld_hr_service",
+            "_type": "request",
+            "name": "Health Check",
+            "url": "{{ _.baseUrl }}:{{ _.hrPort }}/actuator/health",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_funcionarios_list",
+            "parentId": "fld_hr_service",
+            "_type": "request",
+            "name": "Listar Funcionários",
+            "url": "{{ _.baseUrl }}:{{ _.hrPort }}/api/v1/funcionarios",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_funcionarios_create",
+            "parentId": "fld_hr_service",
+            "_type": "request",
+            "name": "Criar Funcionário",
+            "url": "{{ _.baseUrl }}:{{ _.hrPort }}/api/v1/funcionarios",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"nome\": \"Carlos Mecânico\",\n  \"cpf\": \"11122233344\",\n  \"email\": \"carlos.mecanico@oficina.com\",\n  \"telefone\": \"11977776666\",\n  \"cargo\": \"MECANICO\",\n  \"salario\": 3500.00,\n  \"dataAdmissao\": \"2024-01-15\"\n}"
+            },
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ]
+        },
+        {
+            "_id": "fld_os_service",
+            "parentId": "wrk_oficina_localstack",
+            "_type": "request_group",
+            "name": "📋 OS Service (8085)",
+            "description": "Endpoints do serviço de Ordens de Serviço",
+            "metaSortKey": -600
+        },
+        {
+            "_id": "req_os_health",
+            "parentId": "fld_os_service",
+            "_type": "request",
+            "name": "Health Check",
+            "url": "{{ _.baseUrl }}:{{ _.osPort }}/actuator/health",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_os_list",
+            "parentId": "fld_os_service",
+            "_type": "request",
+            "name": "Listar Ordens de Serviço",
+            "url": "{{ _.baseUrl }}:{{ _.osPort }}/api/v1/ordens-servico",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_os_create",
+            "parentId": "fld_os_service",
+            "_type": "request",
+            "name": "Criar Ordem de Serviço",
+            "url": "{{ _.baseUrl }}:{{ _.osPort }}/api/v1/ordens-servico",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"clienteId\": 1,\n  \"veiculoId\": 1,\n  \"funcionarioId\": 1,\n  \"descricao\": \"Revisão completa do veículo\",\n  \"tipo\": \"REVISAO\",\n  \"prioridade\": \"NORMAL\"\n}"
+            },
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ]
+        },
+        {
+            "_id": "req_os_get_by_id",
+            "parentId": "fld_os_service",
+            "_type": "request",
+            "name": "Buscar OS por ID",
+            "url": "{{ _.baseUrl }}:{{ _.osPort }}/api/v1/ordens-servico/1",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "fld_billing_service",
+            "parentId": "wrk_oficina_localstack",
+            "_type": "request_group",
+            "name": "💰 Billing Service (8086)",
+            "description": "Endpoints do serviço de Faturamento",
+            "metaSortKey": -500
+        },
+        {
+            "_id": "req_billing_health",
+            "parentId": "fld_billing_service",
+            "_type": "request",
+            "name": "Health Check",
+            "url": "{{ _.baseUrl }}:{{ _.billingPort }}/actuator/health",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_faturamentos_list",
+            "parentId": "fld_billing_service",
+            "_type": "request",
+            "name": "Listar Faturamentos",
+            "url": "{{ _.baseUrl }}:{{ _.billingPort }}/api/v1/faturamentos",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_orcamentos_list",
+            "parentId": "fld_billing_service",
+            "_type": "request",
+            "name": "Listar Orçamentos",
+            "url": "{{ _.baseUrl }}:{{ _.billingPort }}/api/v1/orcamentos",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_orcamento_create",
+            "parentId": "fld_billing_service",
+            "_type": "request",
+            "name": "Criar Orçamento",
+            "url": "{{ _.baseUrl }}:{{ _.billingPort }}/api/v1/orcamentos",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"ordemServicoId\": 1,\n  \"clienteId\": 1,\n  \"itens\": [\n    {\n      \"descricao\": \"Troca de óleo\",\n      \"quantidade\": 1,\n      \"valorUnitario\": 150.00\n    },\n    {\n      \"descricao\": \"Filtro de óleo\",\n      \"quantidade\": 1,\n      \"valorUnitario\": 45.90\n    }\n  ]\n}"
+            },
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ]
+        },
+        {
+            "_id": "fld_execution_service",
+            "parentId": "wrk_oficina_localstack",
+            "_type": "request_group",
+            "name": "🔧 Execution Service (8087)",
+            "description": "Endpoints do serviço de Execução",
+            "metaSortKey": -400
+        },
+        {
+            "_id": "req_execution_health",
+            "parentId": "fld_execution_service",
+            "_type": "request",
+            "name": "Health Check",
+            "url": "{{ _.baseUrl }}:{{ _.executionPort }}/actuator/health",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_execucoes_list",
+            "parentId": "fld_execution_service",
+            "_type": "request",
+            "name": "Listar Execuções",
+            "url": "{{ _.baseUrl }}:{{ _.executionPort }}/api/v1/execucoes",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_diagnosticos_list",
+            "parentId": "fld_execution_service",
+            "_type": "request",
+            "name": "Listar Diagnósticos",
+            "url": "{{ _.baseUrl }}:{{ _.executionPort }}/api/v1/diagnosticos",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_diagnostico_create",
+            "parentId": "fld_execution_service",
+            "_type": "request",
+            "name": "Criar Diagnóstico",
+            "url": "{{ _.baseUrl }}:{{ _.executionPort }}/api/v1/diagnosticos",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"ordemServicoId\": 1,\n  \"veiculoId\": 1,\n  \"descricao\": \"Verificação completa do sistema de freios\",\n  \"observacoes\": \"Cliente reportou ruído ao frear\"\n}"
+            },
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ]
+        },
+        {
+            "_id": "fld_maintenance_service",
+            "parentId": "wrk_oficina_localstack",
+            "_type": "request_group",
+            "name": "🛠️ Maintenance Service (8088)",
+            "description": "Endpoints do serviço de Manutenção",
+            "metaSortKey": -300
+        },
+        {
+            "_id": "req_maintenance_health",
+            "parentId": "fld_maintenance_service",
+            "_type": "request",
+            "name": "Health Check",
+            "url": "{{ _.baseUrl }}:{{ _.maintenancePort }}/actuator/health",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_manutencoes_list",
+            "parentId": "fld_maintenance_service",
+            "_type": "request",
+            "name": "Listar Manutenções",
+            "url": "{{ _.baseUrl }}:{{ _.maintenancePort }}/api/v1/manutencoes",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_manutencao_create",
+            "parentId": "fld_maintenance_service",
+            "_type": "request",
+            "name": "Criar Manutenção",
+            "url": "{{ _.baseUrl }}:{{ _.maintenancePort }}/api/v1/manutencoes",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"ordemServicoId\": 1,\n  \"veiculoId\": 1,\n  \"tipo\": \"PREVENTIVA\",\n  \"descricao\": \"Troca de óleo e filtros\",\n  \"observacoes\": \"Verificar nível de fluidos\"\n}"
+            },
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ]
+        },
+        {
+            "_id": "fld_notification_service",
+            "parentId": "wrk_oficina_localstack",
+            "_type": "request_group",
+            "name": "📧 Notification Service (8089)",
+            "description": "Endpoints do serviço de Notificações",
+            "metaSortKey": -200
+        },
+        {
+            "_id": "req_notification_health",
+            "parentId": "fld_notification_service",
+            "_type": "request",
+            "name": "Health Check",
+            "url": "{{ _.baseUrl }}:{{ _.notificationPort }}/actuator/health",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_notificacoes_list",
+            "parentId": "fld_notification_service",
+            "_type": "request",
+            "name": "Listar Notificações",
+            "url": "{{ _.baseUrl }}:{{ _.notificationPort }}/api/v1/notificacoes",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_notificacao_create",
+            "parentId": "fld_notification_service",
+            "_type": "request",
+            "name": "Enviar Notificação",
+            "url": "{{ _.baseUrl }}:{{ _.notificationPort }}/api/v1/notificacoes",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"destinatario\": \"cliente@email.com\",\n  \"tipo\": \"EMAIL\",\n  \"assunto\": \"Seu veículo está pronto\",\n  \"mensagem\": \"Informamos que a manutenção do seu veículo foi concluída.\"\n}"
+            },
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ]
+        },
+        {
+            "_id": "fld_operations_service",
+            "parentId": "wrk_oficina_localstack",
+            "_type": "request_group",
+            "name": "⚙️ Operations Service (8092)",
+            "description": "Endpoints do serviço de Operações",
+            "metaSortKey": -100
+        },
+        {
+            "_id": "req_operations_health",
+            "parentId": "fld_operations_service",
+            "_type": "request",
+            "name": "Health Check",
+            "url": "{{ _.baseUrl }}:{{ _.operationsPort }}/actuator/health",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_operacoes_list",
+            "parentId": "fld_operations_service",
+            "_type": "request",
+            "name": "Listar Operações",
+            "url": "{{ _.baseUrl }}:{{ _.operationsPort }}/api/v1/operacoes",
+            "method": "GET",
+            "body": {},
+            "headers": []
+        },
+        {
+            "_id": "req_operacao_create",
+            "parentId": "fld_operations_service",
+            "_type": "request",
+            "name": "Criar Operação",
+            "url": "{{ _.baseUrl }}:{{ _.operationsPort }}/api/v1/operacoes",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"tipo\": \"ABERTURA_OFICINA\",\n  \"descricao\": \"Abertura da oficina para o dia\",\n  \"responsavelId\": 1\n}"
+            },
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ]
+        }
+    ]
+}

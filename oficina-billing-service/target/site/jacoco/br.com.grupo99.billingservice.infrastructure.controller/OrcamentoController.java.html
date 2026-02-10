@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrcamentoController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">billing-service</a> &gt; <a href="index.source.html" class="el_package">br.com.grupo99.billingservice.infrastructure.controller</a> &gt; <span class="el_source">OrcamentoController.java</span></div><h1>OrcamentoController.java</h1><pre class="source lang-java linenums">package br.com.grupo99.billingservice.infrastructure.controller;
+
+import br.com.grupo99.billingservice.application.dto.CreateOrcamentoRequest;
+import br.com.grupo99.billingservice.application.dto.OrcamentoResponse;
+import br.com.grupo99.billingservice.application.service.OrcamentoApplicationService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+/**
+ * REST Controller para Orcamento
+ * 
+ * ✅ CLEAN ARCHITECTURE: Controller chama Application Service
+ * - Não contém lógica de negócio
+ * - Apenas adapta HTTP para DTOs
+ * - Delega para application service
+ */
+<span class="fc" id="L21">@Slf4j</span>
+@RestController
+@RequestMapping(&quot;/api/v1/orcamentos&quot;)
+public class OrcamentoController {
+
+    private final OrcamentoApplicationService service;
+
+<span class="fc" id="L28">    public OrcamentoController(OrcamentoApplicationService service) {</span>
+<span class="fc" id="L29">        this.service = service;</span>
+<span class="fc" id="L30">    }</span>
+
+    /**
+     * POST /api/v1/orcamentos
+     * Criar novo orçamento
+     */
+    @PostMapping
+    public ResponseEntity&lt;OrcamentoResponse&gt; criar(
+            @RequestBody CreateOrcamentoRequest request) {
+<span class="nc" id="L39">        log.info(&quot;POST /orcamentos - criando novo orçamento para OS: {}&quot;, request.getOsId());</span>
+
+        try {
+<span class="nc" id="L42">            OrcamentoResponse response = service.criar(request);</span>
+<span class="nc" id="L43">            return ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
+<span class="nc" id="L44">        } catch (Exception e) {</span>
+<span class="nc" id="L45">            log.error(&quot;Erro ao criar orçamento&quot;, e);</span>
+<span class="nc" id="L46">            throw e;</span>
+        }
+    }
+
+    /**
+     * GET /api/v1/orcamentos/{id}
+     * Obter orçamento por ID
+     */
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;OrcamentoResponse&gt; obterPorId(
+            @PathVariable UUID id) {
+<span class="nc" id="L57">        log.info(&quot;GET /orcamentos/{} - obtendo orçamento&quot;, id);</span>
+
+        try {
+<span class="nc" id="L60">            OrcamentoResponse response = service.obterPorId(id);</span>
+<span class="nc" id="L61">            return ResponseEntity.ok(response);</span>
+<span class="nc" id="L62">        } catch (Exception e) {</span>
+<span class="nc" id="L63">            log.error(&quot;Erro ao obter orçamento&quot;, e);</span>
+<span class="nc" id="L64">            throw e;</span>
+        }
+    }
+
+    /**
+     * PUT /api/v1/orcamentos/{id}/aprovar
+     * Aprovar orçamento
+     */
+    @PutMapping(&quot;/{id}/aprovar&quot;)
+    public ResponseEntity&lt;OrcamentoResponse&gt; aprovar(
+            @PathVariable UUID id) {
+<span class="nc" id="L75">        log.info(&quot;PUT /orcamentos/{}/aprovar - aprovando orçamento&quot;, id);</span>
+
+        try {
+<span class="nc" id="L78">            OrcamentoResponse response = service.aprovar(id);</span>
+<span class="nc" id="L79">            return ResponseEntity.ok(response);</span>
+<span class="nc" id="L80">        } catch (Exception e) {</span>
+<span class="nc" id="L81">            log.error(&quot;Erro ao aprovar orçamento&quot;, e);</span>
+<span class="nc" id="L82">            throw e;</span>
+        }
+    }
+
+    /**
+     * PUT /api/v1/orcamentos/{id}/rejeitar
+     * Rejeitar orçamento
+     */
+    @PutMapping(&quot;/{id}/rejeitar&quot;)
+    public ResponseEntity&lt;OrcamentoResponse&gt; rejeitar(
+            @PathVariable UUID id,
+            @RequestParam(required = false) String motivo) {
+<span class="nc" id="L94">        log.info(&quot;PUT /orcamentos/{}/rejeitar - rejeitando orçamento&quot;, id);</span>
+
+        try {
+<span class="nc" id="L97">            OrcamentoResponse response = service.rejeitar(id, motivo);</span>
+<span class="nc" id="L98">            return ResponseEntity.ok(response);</span>
+<span class="nc" id="L99">        } catch (Exception e) {</span>
+<span class="nc" id="L100">            log.error(&quot;Erro ao rejeitar orçamento&quot;, e);</span>
+<span class="nc" id="L101">            throw e;</span>
+        }
+    }
+
+    /**
+     * DELETE /api/v1/orcamentos/{id}
+     * Cancelar orçamento
+     */
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Void&gt; cancelar(
+            @PathVariable UUID id) {
+<span class="nc" id="L112">        log.info(&quot;DELETE /orcamentos/{} - cancelando orçamento&quot;, id);</span>
+
+        try {
+<span class="nc" id="L115">            service.cancelar(id);</span>
+<span class="nc" id="L116">            return ResponseEntity.noContent().build();</span>
+<span class="nc" id="L117">        } catch (Exception e) {</span>
+<span class="nc" id="L118">            log.error(&quot;Erro ao cancelar orçamento&quot;, e);</span>
+<span class="nc" id="L119">            throw e;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

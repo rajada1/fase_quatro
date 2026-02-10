@@ -1,0 +1,6 @@
+br\com\grupo99\billingservice\infrastructure\repository\OrcamentoRepositoryTest.class
+br\com\grupo99\billingservice\bdd\SagaOrcamentoSteps.class
+br\com\grupo99\billingservice\domain\model\OrcamentoTest.class
+br\com\grupo99\billingservice\infrastructure\messaging\KafkaBillingEventPublisherTest.class
+br\com\grupo99\billingservice\domain\model\PagamentoTest.class
+br\com\grupo99\billingservice\bdd\CucumberTest.class

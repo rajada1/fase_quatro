@@ -1,0 +1,12 @@
+package br.com.grupo99.notificacao.domain;
+
+public enum TipoNotificacao {
+    CONFIRMACAO_MANUTENCAO,
+    CANCELAMENTO_MANUTENCAO,
+    CONCLUSAO_MANUTENCAO,
+    PAGAMENTO_CONFIRMADO,
+    PAGAMENTO_RECUSADO,
+    ORCAMENTO_CRIADO,
+    CLIENTE_CRIADO,
+    ALERTA_SISTEMA
+}

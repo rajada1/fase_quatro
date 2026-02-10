@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PagamentoController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">billing-service</a> &gt; <a href="index.source.html" class="el_package">br.com.grupo99.billingservice.infrastructure.controller</a> &gt; <span class="el_source">PagamentoController.java</span></div><h1>PagamentoController.java</h1><pre class="source lang-java linenums">package br.com.grupo99.billingservice.infrastructure.controller;
+
+import br.com.grupo99.billingservice.application.dto.CreatePagamentoRequest;
+import br.com.grupo99.billingservice.application.dto.PagamentoResponse;
+import br.com.grupo99.billingservice.application.service.PagamentoApplicationService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+/**
+ * REST Controller para Pagamento
+ * 
+ * ✅ CLEAN ARCHITECTURE: Controller chama Application Service
+ */
+<span class="fc" id="L18">@Slf4j</span>
+@RestController
+@RequestMapping(&quot;/api/v1/pagamentos&quot;)
+public class PagamentoController {
+
+    private final PagamentoApplicationService service;
+
+<span class="fc" id="L25">    public PagamentoController(PagamentoApplicationService service) {</span>
+<span class="fc" id="L26">        this.service = service;</span>
+<span class="fc" id="L27">    }</span>
+
+    /**
+     * POST /api/v1/pagamentos
+     * Registrar novo pagamento
+     */
+    @PostMapping
+    public ResponseEntity&lt;PagamentoResponse&gt; registrar(
+            @RequestBody CreatePagamentoRequest request) {
+<span class="nc" id="L36">        log.info(&quot;POST /pagamentos - registrando pagamento para orçamento: {}&quot;, request.getOrcamentoId());</span>
+
+        try {
+<span class="nc" id="L39">            PagamentoResponse response = service.registrar(request);</span>
+<span class="nc" id="L40">            return ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
+<span class="nc" id="L41">        } catch (Exception e) {</span>
+<span class="nc" id="L42">            log.error(&quot;Erro ao registrar pagamento&quot;, e);</span>
+<span class="nc" id="L43">            throw e;</span>
+        }
+    }
+
+    /**
+     * PUT /api/v1/pagamentos/{id}/confirmar
+     * Confirmar pagamento
+     */
+    @PutMapping(&quot;/{id}/confirmar&quot;)
+    public ResponseEntity&lt;PagamentoResponse&gt; confirmar(
+            @PathVariable UUID id) {
+<span class="nc" id="L54">        log.info(&quot;PUT /pagamentos/{}/confirmar - confirmando pagamento&quot;, id);</span>
+
+        try {
+<span class="nc" id="L57">            PagamentoResponse response = service.confirmar(id);</span>
+<span class="nc" id="L58">            return ResponseEntity.ok(response);</span>
+<span class="nc" id="L59">        } catch (Exception e) {</span>
+<span class="nc" id="L60">            log.error(&quot;Erro ao confirmar pagamento&quot;, e);</span>
+<span class="nc" id="L61">            throw e;</span>
+        }
+    }
+
+    /**
+     * PUT /api/v1/pagamentos/{id}/estornar
+     * Estornar pagamento
+     */
+    @PutMapping(&quot;/{id}/estornar&quot;)
+    public ResponseEntity&lt;PagamentoResponse&gt; estornar(
+            @PathVariable UUID id,
+            @RequestParam(required = false) String motivo) {
+<span class="nc" id="L73">        log.info(&quot;PUT /pagamentos/{}/estornar - estornando pagamento&quot;, id);</span>
+
+        try {
+<span class="nc" id="L76">            PagamentoResponse response = service.estornar(id, motivo);</span>
+<span class="nc" id="L77">            return ResponseEntity.ok(response);</span>
+<span class="nc" id="L78">        } catch (Exception e) {</span>
+<span class="nc" id="L79">            log.error(&quot;Erro ao estornar pagamento&quot;, e);</span>
+<span class="nc" id="L80">            throw e;</span>
+        }
+    }
+
+    /**
+     * DELETE /api/v1/pagamentos/{id}
+     * Cancelar pagamento
+     */
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Void&gt; cancelar(
+            @PathVariable UUID id) {
+<span class="nc" id="L91">        log.info(&quot;DELETE /pagamentos/{} - cancelando pagamento&quot;, id);</span>
+
+        try {
+<span class="nc" id="L94">            service.cancelar(id);</span>
+<span class="nc" id="L95">            return ResponseEntity.noContent().build();</span>
+<span class="nc" id="L96">        } catch (Exception e) {</span>
+<span class="nc" id="L97">            log.error(&quot;Erro ao cancelar pagamento&quot;, e);</span>
+<span class="nc" id="L98">            throw e;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

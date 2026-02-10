@@ -1,0 +1,56 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< br.com.grupo99:execution-service >------------------
+[INFO] Building execution-service 1.0.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ execution-service ---
+[INFO] Deleting C:\Users\Meu Computador\OneDrive\┴rea de Trabalho\FIAP\projeto\fase_quatro\oficina-execution-service\target
+[INFO] 
+[INFO] --- jacoco:0.8.11:prepare-agent (default) @ execution-service ---
+[INFO] argLine set to "-javaagent:C:\\Users\\Meu Computador\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.11\\org.jacoco.agent-0.8.11-runtime.jar=destfile=C:\\Users\\Meu Computador\\OneDrive\\┴rea de Trabalho\\FIAP\\projeto\\fase_quatro\\oficina-execution-service\\target\\jacoco.exec,excludes=**/*Application.class:**/domain/repository/*.class:**/infrastructure/messaging/*.class:**/infrastructure/config/*.class"
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ execution-service ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 6 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ execution-service ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 41 source files with javac [debug release 21] to target\classes
+[INFO] /C:/Users/Meu Computador/OneDrive/┴rea de Trabalho/FIAP/projeto/fase_quatro/oficina-execution-service/src/main/java/br/com/grupo99/executionservice/application/dto/DiagnosticoRequestDTO.java: Some input files use or override a deprecated API.
+[INFO] /C:/Users/Meu Computador/OneDrive/┴rea de Trabalho/FIAP/projeto/fase_quatro/oficina-execution-service/src/main/java/br/com/grupo99/executionservice/application/dto/DiagnosticoRequestDTO.java: Recompile with -Xlint:deprecation for details.
+[INFO] Some messages have been simplified; recompile with -Xdiags:verbose to get full output
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /C:/Users/Meu Computador/OneDrive/┴rea de Trabalho/FIAP/projeto/fase_quatro/oficina-execution-service/src/main/java/br/com/grupo99/executionservice/infrastructure/persistence/mapper/ExecucaoOSEntityMapper.java:[48,39] no suitable method found for valueOf(br.com.grupo99.executionservice.domain.model.StatusExecucao)
+    method java.lang.Enum.<T>valueOf(java.lang.Class<T>,java.lang.String) is not applicable
+      (cannot infer type-variable(s) T
+        (actual and formal argument lists differ in length))
+    method br.com.grupo99.executionservice.domain.model.StatusExecucao.valueOf(java.lang.String) is not applicable
+      (argument mismatch; br.com.grupo99.executionservice.domain.model.StatusExecucao cannot be converted to java.lang.String)
+[ERROR] /C:/Users/Meu Computador/OneDrive/┴rea de Trabalho/FIAP/projeto/fase_quatro/oficina-execution-service/src/main/java/br/com/grupo99/executionservice/infrastructure/persistence/mapper/ExecucaoOSEntityMapper.java:[83,48] incompatible types: java.lang.String cannot be converted to br.com.grupo99.executionservice.domain.model.StatusExecucao
+[INFO] 2 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  15.191 s
+[INFO] Finished at: 2026-02-01T19:25:31-03:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project execution-service: Compilation failure: Compilation failure: 
+[ERROR] /C:/Users/Meu Computador/OneDrive/┴rea de Trabalho/FIAP/projeto/fase_quatro/oficina-execution-service/src/main/java/br/com/grupo99/executionservice/infrastructure/persistence/mapper/ExecucaoOSEntityMapper.java:[48,39] no suitable method found for valueOf(br.com.grupo99.executionservice.domain.model.StatusExecucao)
+[ERROR]     method java.lang.Enum.<T>valueOf(java.lang.Class<T>,java.lang.String) is not applicable
+[ERROR]       (cannot infer type-variable(s) T
+[ERROR]         (actual and formal argument lists differ in length))
+[ERROR]     method br.com.grupo99.executionservice.domain.model.StatusExecucao.valueOf(java.lang.String) is not applicable
+[ERROR]       (argument mismatch; br.com.grupo99.executionservice.domain.model.StatusExecucao cannot be converted to java.lang.String)
+[ERROR] /C:/Users/Meu Computador/OneDrive/┴rea de Trabalho/FIAP/projeto/fase_quatro/oficina-execution-service/src/main/java/br/com/grupo99/executionservice/infrastructure/persistence/mapper/ExecucaoOSEntityMapper.java:[83,48] incompatible types: java.lang.String cannot be converted to br.com.grupo99.executionservice.domain.model.StatusExecucao
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

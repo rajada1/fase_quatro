@@ -1,0 +1,42 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< br.com.grupo99:execution-service >------------------
+[INFO] Building execution-service 1.0.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ execution-service ---
+[INFO] Deleting C:\Users\Meu Computador\OneDrive\┴rea de Trabalho\FIAP\projeto\fase_quatro\oficina-execution-service\target
+[INFO] 
+[INFO] --- jacoco:0.8.11:prepare-agent (default) @ execution-service ---
+[INFO] argLine set to "-javaagent:C:\\Users\\Meu Computador\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.11\\org.jacoco.agent-0.8.11-runtime.jar=destfile=C:\\Users\\Meu Computador\\OneDrive\\┴rea de Trabalho\\FIAP\\projeto\\fase_quatro\\oficina-execution-service\\target\\jacoco.exec,excludes=**/*Application.class:**/domain/repository/*.class:**/infrastructure/messaging/*.class:**/infrastructure/config/*.class"
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ execution-service ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 6 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ execution-service ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 41 source files with javac [debug release 21] to target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /C:/Users/Meu Computador/OneDrive/┴rea de Trabalho/FIAP/projeto/fase_quatro/oficina-execution-service/src/main/java/br/com/grupo99/executionservice/domain/model/Tarefa.java:[108,5] illegal start of expression
+[INFO] 1 error
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  3.787 s
+[INFO] Finished at: 2026-02-01T19:04:08-03:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project execution-service: Compilation failure
+[ERROR] /C:/Users/Meu Computador/OneDrive/┴rea de Trabalho/FIAP/projeto/fase_quatro/oficina-execution-service/src/main/java/br/com/grupo99/executionservice/domain/model/Tarefa.java:[108,5] illegal start of expression
+[ERROR] 
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

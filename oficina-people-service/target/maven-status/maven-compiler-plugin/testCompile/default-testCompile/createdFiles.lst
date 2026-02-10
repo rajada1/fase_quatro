@@ -1,0 +1,4 @@
+br\com\grupo99\peopleservice\application\service\PessoaApplicationServiceTest.class
+br\com\grupo99\peopleservice\adapter\controller\PessoaControllerTest.class
+br\com\grupo99\peopleservice\config\BddTestConfiguration.class
+br\com\grupo99\peopleservice\config\TestConfig.class
