@@ -41,7 +41,7 @@ Este arquivo consolida **TODOS os documentos técnicos de trabalho** criados dur
 
 ### 1. 🔍 Análises Técnicas (4 documentos)
 
-#### 1.1 [ANALISE_CIRCUIT_BREAKER.md](ANALISE_CIRCUIT_BREAKER.md)
+#### 1.1 ANALISE_CIRCUIT_BREAKER.md *(documento removido)*
 **Data:** 09/02/2026  
 **Status:** ✅ COMPLETO  
 **Resumo:**
@@ -58,7 +58,7 @@ Este arquivo consolida **TODOS os documentos técnicos de trabalho** criados dur
 
 ---
 
-#### 1.2 [ANALISE_CLEAN_ARCHITECTURE.md](ANALISE_CLEAN_ARCHITECTURE.md)
+#### 1.2 ANALISE_CLEAN_ARCHITECTURE.md *(documento removido)*
 **Data:** Janeiro 2026  
 **Status:** ✅ COMPLETO  
 **Resumo:**
@@ -69,7 +69,7 @@ Este arquivo consolida **TODOS os documentos técnicos de trabalho** criados dur
 
 ---
 
-#### 1.3 [ANALISE_REPOSITORIOS.md](ANALISE_REPOSITORIOS.md)
+#### 1.3 ANALISE_REPOSITORIOS.md *(documento removido)*
 **Data:** Janeiro 2026  
 **Status:** ✅ COMPLETO  
 **Resumo:**
@@ -80,7 +80,7 @@ Este arquivo consolida **TODOS os documentos técnicos de trabalho** criados dur
 
 ---
 
-#### 1.4 [ANALISE_SAGA_PATTERN.md](ANALISE_SAGA_PATTERN.md)
+#### 1.4 ANALISE_SAGA_PATTERN.md *(documento removido)*
 **Data:** Janeiro 2026  
 **Status:** ✅ COMPLETO  
 **Resumo:**
@@ -93,7 +93,7 @@ Este arquivo consolida **TODOS os documentos técnicos de trabalho** criados dur
 
 ### 2. 📊 Relatórios de Auditoria e Validação (7 documentos)
 
-#### 2.1 [RELATORIO_AUDITORIA_AWS_GITHUB.md](RELATORIO_AUDITORIA_AWS_GITHUB.md) ⭐
+#### 2.1 RELATORIO_AUDITORIA_AWS_GITHUB.md *(documento removido)* ⭐
 **Data:** 09/02/2026  
 **Status:** ✅ COMPLETO  
 **Resumo:**
@@ -111,7 +111,7 @@ Este arquivo consolida **TODOS os documentos técnicos de trabalho** criados dur
 
 ---
 
-#### 2.2 [RELATORIO_TESTES_FINAL.md](RELATORIO_TESTES_FINAL.md)
+#### 2.2 RELATORIO_TESTES_FINAL.md *(documento removido)*
 **Data:** Janeiro 2026  
 **Status:** ✅ COMPLETO  
 **Resumo:**
@@ -121,7 +121,7 @@ Este arquivo consolida **TODOS os documentos técnicos de trabalho** criados dur
 
 ---
 
-#### 2.3 [RELATORIO_TESTES_MICROSERVICOS.md](RELATORIO_TESTES_MICROSERVICOS.md)
+#### 2.3 RELATORIO_TESTES_MICROSERVICOS.md *(documento removido)*
 **Data:** Janeiro 2026  
 **Status:** ✅ COMPLETO  
 **Resumo:**
@@ -133,7 +133,7 @@ Este arquivo consolida **TODOS os documentos técnicos de trabalho** criados dur
 
 ---
 
-#### 2.4 [SQS_VALIDATION_REPORT.md](SQS_VALIDATION_REPORT.md)
+#### 2.4 SQS_VALIDATION_REPORT.md *(documento removido)*
 **Data:** Dezembro 2025  
 **Status:** ⚠️ OBSOLETO (migrado para Kafka)  
 **Resumo:**
@@ -142,7 +142,7 @@ Este arquivo consolida **TODOS os documentos técnicos de trabalho** criados dur
 
 ---
 
-#### 2.5 [RELATORIO_CORRECOES_CLEAN_ARCHITECTURE.md](RELATORIO_CORRECOES_CLEAN_ARCHITECTURE.md)
+#### 2.5 RELATORIO_CORRECOES_CLEAN_ARCHITECTURE.md *(documento removido)*
 **Data:** Janeiro 2026  
 **Status:** ✅ COMPLETO  
 **Resumo:**
@@ -152,7 +152,7 @@ Este arquivo consolida **TODOS os documentos técnicos de trabalho** criados dur
 
 ---
 
-#### 2.6 [RELATORIO_CORRECAO_SAGA.md](RELATORIO_CORRECAO_SAGA.md)
+#### 2.6 RELATORIO_CORRECAO_SAGA.md *(documento removido)*
 **Data:** Janeiro 2026  
 **Status:** ✅ COMPLETO  
 **Resumo:**
@@ -162,7 +162,7 @@ Este arquivo consolida **TODOS os documentos técnicos de trabalho** criados dur
 
 ---
 
-#### 2.7 [RELATORIO_SAGA_PATTERN_IMPLEMENTACAO.md](RELATORIO_SAGA_PATTERN_IMPLEMENTACAO.md)
+#### 2.7 RELATORIO_SAGA_PATTERN_IMPLEMENTACAO.md *(documento removido)*
 **Data:** Dezembro 2025  
 **Status:** ✅ COMPLETO  
 **Resumo:**
@@ -174,7 +174,7 @@ Este arquivo consolida **TODOS os documentos técnicos de trabalho** criados dur
 
 ### 3. 🛠️ Planos de Ação e Correção (2 documentos)
 
-#### 3.1 [PLANO_CORRECAO_AWS.md](PLANO_CORRECAO_AWS.md) ⭐
+#### 3.1 PLANO_CORRECAO_AWS.md *(documento removido)* ⭐
 **Data:** 09/02/2026  
 **Status:** 🔄 EM EXECUÇÃO  
 **Resumo:**
@@ -190,7 +190,7 @@ Este arquivo consolida **TODOS os documentos técnicos de trabalho** criados dur
 
 ---
 
-#### 3.2 [PLANO_ACAO_REPOSITORIOS.md](PLANO_ACAO_REPOSITORIOS.md)
+#### 3.2 PLANO_ACAO_REPOSITORIOS.md *(documento removido)*
 **Data:** Janeiro 2026  
 **Status:** ✅ COMPLETO  
 **Resumo:**
@@ -202,7 +202,7 @@ Este arquivo consolida **TODOS os documentos técnicos de trabalho** criados dur
 
 ### 4. 📝 Resumos Executivos (4 documentos)
 
-#### 4.1 [RESUMO_FINAL.md](RESUMO_FINAL.md)
+#### 4.1 RESUMO_FINAL.md *(documento removido)*
 **Data:** Janeiro 2026  
 **Status:** ✅ COMPLETO  
 **Resumo:**
@@ -212,7 +212,7 @@ Este arquivo consolida **TODOS os documentos técnicos de trabalho** criados dur
 
 ---
 
-#### 4.2 [RESUMO_EXECUTIVO_REPOSITORIOS.md](RESUMO_EXECUTIVO_REPOSITORIOS.md)
+#### 4.2 RESUMO_EXECUTIVO_REPOSITORIOS.md *(documento removido)*
 **Data:** Janeiro 2026  
 **Status:** ✅ COMPLETO  
 **Resumo:**
@@ -222,7 +222,7 @@ Este arquivo consolida **TODOS os documentos técnicos de trabalho** criados dur
 
 ---
 
-#### 4.3 [RESUMO_IMPLEMENTACAO_JWT.md](RESUMO_IMPLEMENTACAO_JWT.md)
+#### 4.3 RESUMO_IMPLEMENTACAO_JWT.md *(documento removido)*
 **Data:** Dezembro 2025  
 **Status:** ✅ COMPLETO  
 **Resumo:**
@@ -232,7 +232,7 @@ Este arquivo consolida **TODOS os documentos técnicos de trabalho** criados dur
 
 ---
 
-#### 4.4 [SUMARIO_FINAL_CLEAN_ARCHITECTURE.md](SUMARIO_FINAL_CLEAN_ARCHITECTURE.md)
+#### 4.4 SUMARIO_FINAL_CLEAN_ARCHITECTURE.md *(documento removido)*
 **Data:** Janeiro 2026  
 **Status:** ✅ COMPLETO  
 **Resumo:**
@@ -244,58 +244,58 @@ Este arquivo consolida **TODOS os documentos técnicos de trabalho** criados dur
 
 ### 5. 🔐 Documentação JWT (8 documentos)
 
-#### 5.1 [README_JWT_IMPLEMENTATION.md](README_JWT_IMPLEMENTATION.md)
+#### 5.1 README_JWT_IMPLEMENTATION.md *(documento removido)*
 **Resumo:** README principal da implementação JWT
 
-#### 5.2 [GUIA_TECNICO_JWT.md](GUIA_TECNICO_JWT.md)
+#### 5.2 GUIA_TECNICO_JWT.md *(documento removido)*
 **Resumo:** Guia técnico detalhado de JWT
 
-#### 5.3 [JWT_CLIENT_USAGE_GUIDE.md](JWT_CLIENT_USAGE_GUIDE.md)
+#### 5.3 JWT_CLIENT_USAGE_GUIDE.md *(documento removido)*
 **Resumo:** Guia de uso do cliente JWT
 
-#### 5.4 [JWT_DOCUMENTATION_INDEX.md](JWT_DOCUMENTATION_INDEX.md)
+#### 5.4 JWT_DOCUMENTATION_INDEX.md *(documento removido)*
 **Resumo:** Índice da documentação JWT
 
-#### 5.5 [JWT_FILES_MANIFEST.md](JWT_FILES_MANIFEST.md)
+#### 5.5 JWT_FILES_MANIFEST.md *(documento removido)*
 **Resumo:** Manifesto de arquivos JWT
 
-#### 5.6 [JWT_IMPLEMENTATION_CATALOG_SERVICE.md](JWT_IMPLEMENTATION_CATALOG_SERVICE.md)
+#### 5.6 JWT_IMPLEMENTATION_CATALOG_SERVICE.md *(documento removido)*
 **Resumo:** Implementação JWT no Catalog Service
 
-#### 5.7 [JWT_IMPLEMENTATION_GUIDE.md](JWT_IMPLEMENTATION_GUIDE.md)
+#### 5.7 JWT_IMPLEMENTATION_GUIDE.md *(documento removido)*
 **Resumo:** Guia de implementação JWT
 
-#### 5.8 [JWT_IMPLEMENTATION_SUMMARY.md](JWT_IMPLEMENTATION_SUMMARY.md)
+#### 5.8 JWT_IMPLEMENTATION_SUMMARY.md *(documento removido)*
 **Resumo:** Sumário da implementação JWT
 
-#### 5.9 [RELATORIO_IMPLEMENTACAO_JWT.md](RELATORIO_IMPLEMENTACAO_JWT.md)
+#### 5.9 RELATORIO_IMPLEMENTACAO_JWT.md *(documento removido)*
 **Resumo:** Relatório oficial de implementação JWT
 
 ---
 
 ### 6. 🏛️ Documentos de Arquitetura (4 documentos)
 
-#### 6.1 [ARQUITETURA_REPOSITORIOS.md](ARQUITETURA_REPOSITORIOS.md)
+#### 6.1 ARQUITETURA_REPOSITORIOS.md *(documento removido)*
 **Resumo:** Arquitetura dos repositórios do projeto
 
-#### 6.2 [ESTRUTURA_VISUAL_REPOSITORIOS.md](ESTRUTURA_VISUAL_REPOSITORIOS.md)
+#### 6.2 ESTRUTURA_VISUAL_REPOSITORIOS.md *(documento removido)*
 **Resumo:** Diagramas visuais da estrutura de repositórios
 
-#### 6.3 [BILLING_ARCHITECTURE_ISSUES.md](BILLING_ARCHITECTURE_ISSUES.md)
+#### 6.3 BILLING_ARCHITECTURE_ISSUES.md *(documento removido)*
 **Resumo:** Problemas arquiteturais identificados no Billing Service
 
-#### 6.4 [BILLING_CORRECTIONS_PROGRESS.md](BILLING_CORRECTIONS_PROGRESS.md)
+#### 6.4 [BILLING_CORRECTIONS_PROGRESS.md](oficina-billing-service/BILLING_CORRECTIONS_PROGRESS.md)
 **Resumo:** Progresso das correções no Billing Service
 
 ---
 
 ### 7. 🔧 Infraestrutura e SQS (2 documentos)
 
-#### 7.1 [SQS_INFRASTRUCTURE_IMPLEMENTATION.md](SQS_INFRASTRUCTURE_IMPLEMENTATION.md)
+#### 7.1 SQS_INFRASTRUCTURE_IMPLEMENTATION.md *(documento removido)*
 **Status:** ⚠️ OBSOLETO (migrado para Kafka)  
 **Resumo:** Implementação de infraestrutura AWS SQS (substituída por Kafka)
 
-#### 7.2 [SQS_VALIDATION_REPORT.md](SQS_VALIDATION_REPORT.md)
+#### 7.2 SQS_VALIDATION_REPORT.md *(documento removido)*
 **Status:** ⚠️ OBSOLETO (migrado para Kafka)  
 **Resumo:** Validação de SQS (substituída por Kafka)
 
@@ -303,10 +303,10 @@ Este arquivo consolida **TODOS os documentos técnicos de trabalho** criados dur
 
 ### 8. 📋 Outros Documentos (2 documentos)
 
-#### 8.1 [LISTA_REPOSITORIOS_CRIAR.md](LISTA_REPOSITORIOS_CRIAR.md)
+#### 8.1 LISTA_REPOSITORIOS_CRIAR.md *(documento removido)*
 **Resumo:** Lista de repositórios a serem criados
 
-#### 8.2 [INDICE_DOCUMENTACAO.md](INDICE_DOCUMENTACAO.md)
+#### 8.2 INDICE_DOCUMENTACAO.md *(documento removido)*
 **Resumo:** Índice antigo de documentação (substituído por docs/INDEX.md)
 
 ---
@@ -405,18 +405,18 @@ Fevereiro 2026
 3. **Analise relatórios de auditoria** para compliance
 
 ### Para Auditoria
-1. **Análise Circuit Breaker:** [ANALISE_CIRCUIT_BREAKER.md](ANALISE_CIRCUIT_BREAKER.md)
-2. **Auditoria AWS/GitHub:** [RELATORIO_AUDITORIA_AWS_GITHUB.md](RELATORIO_AUDITORIA_AWS_GITHUB.md)
-3. **Relatórios de Testes:** [RELATORIO_TESTES_FINAL.md](RELATORIO_TESTES_FINAL.md)
+1. **Análise Circuit Breaker:** ANALISE_CIRCUIT_BREAKER.md *(documento removido)*
+2. **Auditoria AWS/GitHub:** RELATORIO_AUDITORIA_AWS_GITHUB.md *(documento removido)*
+3. **Relatórios de Testes:** RELATORIO_TESTES_FINAL.md *(documento removido)*
 
 ---
 
 ## 🔖 Referências Rápidas
 
 ### Documentos Mais Importantes
-1. **[ANALISE_CIRCUIT_BREAKER.md](ANALISE_CIRCUIT_BREAKER.md)** - Análise de resiliência
-2. **[RELATORIO_AUDITORIA_AWS_GITHUB.md](RELATORIO_AUDITORIA_AWS_GITHUB.md)** - Auditoria completa
-3. **[PLANO_CORRECAO_AWS.md](PLANO_CORRECAO_AWS.md)** - Ações pendentes
+1. **ANALISE_CIRCUIT_BREAKER.md** *(documento removido)* - Análise de resiliência
+2. **RELATORIO_AUDITORIA_AWS_GITHUB.md** *(documento removido)* - Auditoria completa
+3. **PLANO_CORRECAO_AWS.md** *(documento removido)* - Ações pendentes
 
 ### Documentação Oficial
 - [Documentação Official (docs/)](docs/)

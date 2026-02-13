@@ -479,10 +479,10 @@ http_server_requests_seconds_count{uri="/api/v1/ordens-servico"} 850
 ## 📚 Referências
 
 ### Documentos Técnicos
-- [Análise Circuit Breaker](../ANALISE_CIRCUIT_BREAKER.md)
-- [Relatório Auditoria AWS/GitHub](../RELATORIO_AUDITORIA_AWS_GITHUB.md)
-- [Plano Correção AWS](../PLANO_CORRECAO_AWS.md)
-- [Migration Summary](./MIGRATION_SUMMARY.md)
+- Análise Circuit Breaker *(documento removido)*
+- Relatório Auditoria AWS/GitHub *(documento removido)*
+- Plano Correção AWS *(documento removido)*
+- Migration Summary
 
 ### Padrões Implementados
 - ✅ Clean Architecture
@@ -494,12 +494,12 @@ http_server_requests_seconds_count{uri="/api/v1/ordens-servico"} 850
 - ✅ API Gateway
 
 ### RFC/ADR
-- [RFC-001: Escolha AWS](./architecture/rfcs/RFC-001-escolha-cloud-aws.md)
-- [RFC-002: Estratégia Banco de Dados](./architecture/rfcs/RFC-002-estrategia-banco-dados.md)
-- [RFC-003: Kafka vs SQS](./architecture/rfcs/RFC-003-kafka-migration.md)
-- [ADR-001: Padrão REST](./architecture/adrs/ADR-001-padrao-comunicacao-rest.md)
-- [ADR-002: HPA Kubernetes](./architecture/adrs/ADR-002-uso-hpa-kubernetes.md)
-- [ADR-003: New Relic](./architecture/adrs/ADR-003-observabilidade-newrelic.md)
+- [RFC-001: Migração para Microserviços](./architecture/rfcs/RFC-001-migracao-microservicos.md)
+- RFC-002: Estratégia Banco de Dados *(documento removido)*
+- RFC-003: Kafka vs SQS
+- [ADR-001: Event-Driven Architecture](./architecture/adrs/ADR-001-event-driven-architecture.md)
+- [ADR-002: Database per Service](./architecture/adrs/ADR-002-database-per-service.md)
+- [ADR-003: Distributed Tracing com New Relic](./architecture/adrs/ADR-003-distributed-tracing-newrelic.md)
 
 ---
 

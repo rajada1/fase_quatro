@@ -192,7 +192,7 @@ Este projeto implementa o **Saga Pattern Coreografado** para coordenar transaç�
    - **Mitigação**: Logs estruturados com correlationId em todas as mensagens
 
 2. **Visibilidade do Fluxo Distribuído**
-   - **Mitigação**: Documentação clara dos fluxos em [SAGA_PATTERN_IMPLEMENTATION.md](./docs/SAGA_PATTERN_IMPLEMENTATION.md)
+   - **Mitigação**: Documentação clara dos fluxos em [SAGA_PATTERN_IMPLEMENTATION.md](./docs/architecture/03-padrao-saga.md)
    - **Mitigação**: Dashboards do New Relic para monitoramento end-to-end
 
 3. **Lógica de Negócio Espalhada**
@@ -223,9 +223,9 @@ O Saga Coreografado está implementado com:
 
 Para entender a implementação técnica completa:
 
-1. **[SAGA_PATTERN_IMPLEMENTATION.md](./docs/SAGA_PATTERN_IMPLEMENTATION.md)** - Guia completo de implementação
-2. **[SAGA_ROLLBACK_COMPENSATION.md](./docs/SAGA_ROLLBACK_COMPENSATION.md)** - Cenários de compensação
-3. **[SAGA_ROLLBACK_DIAGRAM.md](./docs/SAGA_ROLLBACK_DIAGRAM.md)** - Diagramas visuais dos fluxos
+1. **[SAGA_PATTERN_IMPLEMENTATION.md](./docs/architecture/03-padrao-saga.md)** - Guia completo de implementação
+2. **SAGA_ROLLBACK_COMPENSATION.md** - Cenários de compensação *(documento removido)*
+3. **SAGA_ROLLBACK_DIAGRAM.md** - Diagramas visuais dos fluxos *(documento removido)*
 4. **[ADR-002](./docs/architecture/adrs/ADR-002-database-per-service.md)** - Decisão de Database per Service + Saga
 
 ### Fluxo Normal (Happy Path)
@@ -370,7 +370,7 @@ data:
 - **[README Principal](./docs/architecture/README.md)** - Visão geral completa
 - **[Diagrama de Componentes](./docs/architecture/01-diagrama-componentes.md)** - Arquitetura detalhada
 - **[Fluxos de Sequência](./docs/architecture/02-fluxos-sequencia.md)** - Diagramas de interação
-- **[Modelo de Dados](./docs/architecture/05-modelo-dados.md)** - Schemas de banco
+- **[Modelo de Dados](./tech_fiap3/doc/architecture/05-modelo-dados.md)** - Schemas de banco
 
 ### Decisões Arquiteturais (ADRs)
 
@@ -384,12 +384,12 @@ data:
 
 ### Guias Técnicos
 
-- **[CI/CD Pipelines](./CICD-PIPELINES.md)** - Documentação dos pipelines
-- **[New Relic Config](./NEW-RELIC-CONFIG.md)** - Configuração do New Relic
-- **[Swagger Documentation](./SWAGGER-DOCUMENTATION.md)** - Documentação das APIs
-- **[Saga Pattern Implementation](./docs/SAGA_PATTERN_IMPLEMENTATION.md)** - Implementação completa do Saga
-- **[Saga Rollback & Compensation](./docs/SAGA_ROLLBACK_COMPENSATION.md)** - Cenários de compensação
-- **[Saga Flow Diagrams](./docs/SAGA_ROLLBACK_DIAGRAM.md)** - Diagramas visuais dos fluxos
+- **CI/CD Pipelines** - Documentação dos pipelines *(documento removido)*
+- **New Relic Config** - Configuração do New Relic *(documento removido)*
+- **Swagger Documentation** - Documentação das APIs *(documento removido)*
+- **[Saga Pattern Implementation](./docs/architecture/03-padrao-saga.md)** - Implementação completa do Saga
+- **Saga Rollback & Compensation** - Cenários de compensação *(documento removido)*
+- **Saga Flow Diagrams** - Diagramas visuais dos fluxos *(documento removido)*
 
 ## 🧪 Testes
 

@@ -370,9 +370,9 @@ mvn spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=local"
 ### Análises Técnicas
 | Documento | O que contém |
 |-----------|--------------|
-| [ANALISE_CIRCUIT_BREAKER.md](../ANALISE_CIRCUIT_BREAKER.md) | Análise completa do Circuit Breaker |
-| [RELATORIO_AUDITORIA_AWS_GITHUB.md](../RELATORIO_AUDITORIA_AWS_GITHUB.md) | Auditoria de configurações AWS/GitHub |
-| [PLANO_CORRECAO_AWS.md](../PLANO_CORRECAO_AWS.md) | Plano de limpeza SQS (legado) |
+| ANALISE_CIRCUIT_BREAKER.md *(documento removido)* | Análise completa do Circuit Breaker |
+| RELATORIO_AUDITORIA_AWS_GITHUB.md *(documento removido)* | Auditoria de configurações AWS/GitHub |
+| PLANO_CORRECAO_AWS.md *(documento removido)* | Plano de limpeza SQS (legado) |
 
 ### Diagramas
 | Documento | O que contém |

@@ -15,7 +15,7 @@
 ### Para Desenvolvedores
 1. [06 - Referência de Microserviços](./architecture/06-referencia-microservicos.md) - Matriz completa
 2. [02 - Fluxos de Sequência](./architecture/02-fluxos-sequencia.md) - Como tudo se comunica
-3. [05 - Modelo de Dados](./architecture/05-modelo-dados.md) - Schema das bases
+3. [05 - Modelo de Dados](../tech_fiap3/doc/architecture/05-modelo-dados.md) - Schema das bases
 4. [Guia de Arquitetura](./ARCHITECTURE_GUIDE.md) - Atualizado com Kafka
 5. [Referências Técnicas](./REFERENCIAS_TECNICAS.md) - Config, validações, pipelines
 
@@ -23,7 +23,7 @@
 1. [Arquitetura Atual (v2.0)](./ARCHITECTURE_CURRENT.md) ⭐ NOVO - Documento mestre
 2. [01 - Diagrama de Componentes](./architecture/01-diagrama-componentes.md) - Visão geral
 3. [03 - Padrão Saga](./architecture/03-padrao-saga.md) - Padrão de design
-4. [Análise Circuit Breaker](../ANALISE_CIRCUIT_BREAKER.md) - Resiliência
+4. Análise Circuit Breaker *(documento removido)* - Resiliência
 5. [ADRs](./architecture/adrs/) - Decisões tomadas
 6. [RFCs](./architecture/rfcs/) - Propostas técnicas
 
@@ -111,7 +111,7 @@ docs/
 
 | Documento | Localização | Descrição |
 |-----------|------------|-----------|
-| **Quick Start** | `/QUICK-START.md` | Guia 5-min para novos devs |
+| **Quick Start** | `/QUICK_START_ARCHITECTURE.md` | Guia 5-min para novos devs |
 | **Padrão Saga** | `/architecture/03-padrao-saga.md` | Event-Driven Saga completo (400+ linhas) |
 | **Visão Geral** | `/architecture/04-visao-geral-arquitetura.md` | Arquitetura em alto nível com diagramas |
 | **Referência Microserviços** | `/architecture/06-referencia-microservicos.md` | Matriz de 9 serviços (300+ linhas) |
@@ -242,7 +242,7 @@ Total: ~40 minutos
 
 ### Documentação Local
 - [Architecture README](./architecture/README.md) - Índice da arquitetura
-- [Quick Start Guide](./QUICK-START.md) - Guia 5-min
+- [Quick Start Guide](./QUICK_START_ARCHITECTURE.md) - Guia 5-min
 - [Decision Records](./architecture/adrs/) - Decisões arquiteturais
 
 ### Ferramentas Externas
@@ -261,13 +261,13 @@ Total: ~40 minutos
 
 ## ✅ Checklist de Familiarização
 
-- [ ] Li [Quick Start](./QUICK-START.md)
+- [ ] Li [Quick Start](./QUICK_START_ARCHITECTURE.md)
 - [ ] Entendi [Visão Geral da Arquitetura](./architecture/04-visao-geral-arquitetura.md)
 - [ ] Compreendi o [Padrão Saga](./architecture/03-padrao-saga.md)
 - [ ] Conheci todos os [9 Microserviços](./architecture/06-referencia-microservicos.md)
 - [ ] Revisei [Componentes AWS](./architecture/01-diagrama-componentes.md)
 - [ ] Entendi [Fluxos de Sequência](./architecture/02-fluxos-sequencia.md)
-- [ ] Conheci o [Modelo de Dados](./architecture/05-modelo-dados.md)
+- [ ] Conheci o [Modelo de Dados](../tech_fiap3/doc/architecture/05-modelo-dados.md)
 - [ ] Revisei [Decisões Arquiteturais](./architecture/adrs/)
 - [ ] Testei comandos do Quick Start
 - [ ] Fiz build de um serviço localmente
@@ -277,7 +277,7 @@ Total: ~40 minutos
 ## 🎓 FAQ Rápido
 
 **P: Por onde começo?**  
-R: Leia [Quick Start](./QUICK-START.md) primeiro (5 min)
+R: Leia [Quick Start](./QUICK_START_ARCHITECTURE.md) primeiro (5 min)
 
 **P: Como funciona o Saga Pattern?**  
 R: Veja [03 - Padrão Saga](./architecture/03-padrao-saga.md)
@@ -289,10 +289,10 @@ R: Confira [01 - Diagrama de Componentes](./architecture/01-diagrama-componentes
 R: Siga o template em [06 - Referência](./architecture/06-referencia-microservicos.md)
 
 **P: Como fazer deploy?**  
-R: Veja comandos em [Quick Start](./QUICK-START.md#-comandos-essenciais)
+R: Veja comandos em [Quick Start](./QUICK_START_ARCHITECTURE.md#-comandos-essenciais)
 
 **P: Testes estão falhando. O que fazer?**  
-R: Veja [Troubleshooting](./QUICK-START.md#-troubleshooting)
+R: Veja [Troubleshooting](./QUICK_START_ARCHITECTURE.md#-troubleshooting)
 
 ---
 
@@ -343,4 +343,4 @@ Status:          ✅ Production Ready
 *Tech Challenge FIAP - Grupo 99*  
 *Status: ✅ Completo e Pronto para Produção*
 
-**[→ Começar com Quick Start](./QUICK-START.md)**
+**[→ Começar com Quick Start](./QUICK_START_ARCHITECTURE.md)**

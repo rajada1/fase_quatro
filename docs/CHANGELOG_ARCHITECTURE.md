@@ -181,9 +181,9 @@ infrastructure/  # Adapters (REST, Kafka, JPA)
 | [tech_fiap3/doc/architecture/01-diagrama-componentes.md](../tech_fiap3/doc/architecture/01-diagrama-componentes.md) | ✅ Atualizado | 09/02/2026 |
 
 **Docs Novos:**
-- ✅ [ANALISE_CIRCUIT_BREAKER.md](../ANALISE_CIRCUIT_BREAKER.md) - Análise completa
-- ✅ [RELATORIO_AUDITORIA_AWS_GITHUB.md](../RELATORIO_AUDITORIA_AWS_GITHUB.md) - Auditoria infra
-- ✅ [PLANO_CORRECAO_AWS.md](../PLANO_CORRECAO_AWS.md) - Plano de limpeza SQS
+- ✅ ANALISE_CIRCUIT_BREAKER.md *(documento removido)* - Análise completa
+- ✅ RELATORIO_AUDITORIA_AWS_GITHUB.md *(documento removido)* - Auditoria infra
+- ✅ PLANO_CORRECAO_AWS.md *(documento removido)* - Plano de limpeza SQS
 
 ---
 
