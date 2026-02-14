@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: br.com.grupo99.peopleservice.application.service.PessoaApplicationServiceTest
--------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.248 s -- in br.com.grupo99.peopleservice.application.service.PessoaApplicationServiceTest

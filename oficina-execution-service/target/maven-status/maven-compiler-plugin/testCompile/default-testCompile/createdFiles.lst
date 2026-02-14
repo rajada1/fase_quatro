@@ -1,6 +1,0 @@
-br\com\grupo99\executionservice\bdd\CucumberTest.class
-br\com\grupo99\executionservice\config\BddTestConfiguration.class
-br\com\grupo99\executionservice\domain\model\ExecucaoOSTest.class
-br\com\grupo99\executionservice\domain\model\TarefaTest.class
-br\com\grupo99\executionservice\bdd\BootstrapTest.class
-br\com\grupo99\executionservice\bdd\SagaExecucaoSteps.class
