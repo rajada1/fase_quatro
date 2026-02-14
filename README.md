@@ -22,15 +22,26 @@ Solução cloud-native que gerencia o ciclo de vida completo de uma oficina mec�
 
 ## 🏗️ Repositórios do Projeto
 
-| Repositório | Descrição | Status |
-|-------------|-----------|--------|
-| **[oficina-os-service](./oficina-os-service)** | Gerenciamento de Ordens de Serviço | ✅ Produção |
-| **[oficina-billing-service](./oficina-billing-service)** | Orçamentos e Pagamentos | ✅ Produção |
-| **[oficina-execution-service](./oficina-execution-service)** | Execução e Diagnósticos | ✅ Produção |
-| **[lambda-auth-service](./lambda-auth-service)** | Autenticação Serverless | ✅ Produção |
-| **[tech_challenge_k8s_infra](./tech_challenge_k8s_infra)** | Infraestrutura Kubernetes | ✅ Produção |
-| **[tech_challenge_db_infra](./tech_challenge_db_infra)** | Bancos de Dados | ✅ Produção |
-| **[tech_fiap3](./tech_fiap3)** | Aplicação Monolítica Legada | 📦 Deprecated |
+### Core (Microserviços Principais)
+
+| Repositório | Descrição | Porta | Banco | Status |
+|-------------|-----------|-------|-------|--------|
+| **[oficina-gateway](https://github.com/rajada1/oficina-gateway)** | API Gateway (Spring Cloud Gateway) | 8080 | — | ✅ Produção |
+| **[oficina-os-service](https://github.com/rajada1/oficina-os-service)** | Gerenciamento de Ordens de Serviço | 8081 | PostgreSQL | ✅ Produção |
+| **[oficina-billing-service](https://github.com/rajada1/oficina-billing-service)** | Orçamentos e Pagamentos | 8082 | DynamoDB | ✅ Produção |
+| **[oficina-execution-service](https://github.com/rajada1/oficina-execution-service)** | Execução e Diagnósticos | 8083 | PostgreSQL | ✅ Produção |
+
+### Serviços de Apoio
+
+| Repositório | Descrição | Porta | Status |
+|-------------|-----------|-------|--------|
+| **[oficina-customer-service](https://github.com/rajada1/oficina-customer-service)** | Clientes e Veículos | 8084 | ✅ Produção |
+| **[oficina-catalog-service](https://github.com/rajada1/oficina-catalog-service)** | Catálogo de Peças e Serviços | 8085 | ✅ Produção |
+| **[oficina-people-service](https://github.com/rajada1/oficina-people-service)** | Gestão de Pessoas | 8086 | ✅ Produção |
+| **[oficina-hr-service](https://github.com/rajada1/oficina-hr-service)** | Recursos Humanos | 8087 | ✅ Produção |
+| **[oficina-maintenance-service](https://github.com/rajada1/oficina-maintenance-service)** | Manutenções Preventivas | 8088 | ✅ Produção |
+| **[oficina-notification-service](https://github.com/rajada1/oficina-notification-service)** | Notificações | 8089 | ✅ Produção |
+| **[oficina-operations-service](https://github.com/rajada1/oficina-operations-service)** | Operações | 8090 | ✅ Produção |
 
 ## 🚀 Tecnologias Utilizadas
 
