@@ -1,0 +1,268 @@
+version: "3.8"
+
+# =========================================================
+#  Docker Compose UNIFICADO - Oficina Mecânica
+#  Roda OS Service + Billing Service + Execution Service
+#  com um único cluster Kafka e bancos de dados separados
+# =========================================================
+
+services:
+
+  # ======================== INFRA ========================
+
+  # PostgreSQL - OS Service (porta 5432)
+  postgres-os:
+    image: postgres:16-alpine
+    container_name: oficina-postgres-os
+    environment:
+      POSTGRES_DB: osservice_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_os_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - oficina-network
+
+  # PostgreSQL - Execution Service (porta 5433)
+  postgres-execution:
+    image: postgres:16-alpine
+    container_name: oficina-postgres-execution
+    environment:
+      POSTGRES_DB: execution_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_exec_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - oficina-network
+
+  # DynamoDB Local - Billing Service (porta 8000)
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    container_name: oficina-dynamodb
+    ports:
+      - "8000:8000"
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /data"
+    volumes:
+      - dynamodb_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8000 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - oficina-network
+
+  # Zookeeper (Kafka dependency)
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: oficina-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - oficina-network
+
+  # Kafka (cluster único compartilhado)
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: oficina-kafka
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_LOG_RETENTION_HOURS: 720
+      KAFKA_NUM_PARTITIONS: 6
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    networks:
+      - oficina-network
+
+  # Kafka Topics Initialization
+  kafka-init:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: oficina-kafka-init
+    depends_on:
+      kafka:
+        condition: service_healthy
+    command: |
+      bash -c "
+        echo '🔧 Creating Kafka topics for Saga Pattern...'
+        sleep 5
+
+        kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 6 --replication-factor 1 --config retention.ms=2592000000 --topic os-events
+        kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --config retention.ms=2592000000 --topic billing-events
+        kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --config retention.ms=2592000000 --topic execution-events
+        kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic compensacao-events
+        kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic dlt-os-events
+        kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic dlt-billing-events
+        kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic dlt-execution-events
+
+        echo '✅ Topics created:'
+        kafka-topics --list --bootstrap-server kafka:29092
+      "
+    networks:
+      - oficina-network
+
+  # Kafka UI (debug/monitoramento)
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: oficina-kafka-ui
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      KAFKA_CLUSTERS_0_NAME: oficina-cluster
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    ports:
+      - "9090:8080"
+    networks:
+      - oficina-network
+
+  # ======================== MICROSERVIÇOS ========================
+
+  # OS Service (porta 8081)
+  os-service:
+    build:
+      context: ./oficina-os-service
+      dockerfile: Dockerfile
+    container_name: oficina-os-service
+    environment:
+      DB_HOST: postgres-os
+      DB_PORT: 5432
+      DB_NAME: osservice_db
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      KAFKA_CONSUMER_GROUP: os-service-group
+      SPRING_PROFILES_ACTIVE: dev
+      LOG_LEVEL: INFO
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres-os:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      kafka-init:
+        condition: service_completed_successfully
+    networks:
+      - oficina-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Billing Service (porta 8082)
+  billing-service:
+    build:
+      context: ./oficina-billing-service
+      dockerfile: Dockerfile
+    container_name: oficina-billing-service
+    environment:
+      AWS_DYNAMODB_ENDPOINT: http://dynamodb-local:8000
+      AWS_REGION: us-east-1
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      SPRING_PROFILES_ACTIVE: local
+      LOG_LEVEL: INFO
+    ports:
+      - "8082:8082"
+    depends_on:
+      dynamodb-local:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      kafka-init:
+        condition: service_completed_successfully
+    networks:
+      - oficina-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8082/api/v1/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Execution Service (porta 8083)
+  execution-service:
+    build:
+      context: ./oficina-execution-service
+      dockerfile: Dockerfile
+    container_name: oficina-execution-service
+    environment:
+      POSTGRES_HOST: postgres-execution
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: execution_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      SPRING_PROFILES_ACTIVE: local
+      LOG_LEVEL: INFO
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres-execution:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      kafka-init:
+        condition: service_completed_successfully
+    networks:
+      - oficina-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8083/api/v1/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  postgres_os_data:
+  postgres_exec_data:
+  dynamodb_data:
+
+networks:
+  oficina-network:
+    driver: bridge

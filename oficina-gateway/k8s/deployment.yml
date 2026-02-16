@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oficina-gateway
+  namespace: gateway
+  labels:
+    app: oficina-gateway
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: oficina-gateway
+  template:
+    metadata:
+      labels:
+        app: oficina-gateway
+    spec:
+      containers:
+        - name: oficina-gateway
+          image: ${DOCKER_REGISTRY}/oficina-gateway:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "k8s"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secrets
+                  key: jwt-secret
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: oficina-gateway
+  namespace: gateway
+spec:
+  type: LoadBalancer
+  selector:
+    app: oficina-gateway
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gateway

@@ -1,0 +1,92 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: oficina-gateway
+  main:
+    web-application-type: reactive
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY3ODkwYWJjZGVmZw==}
+
+# Service URLs (override via env vars or K8s service discovery)
+services:
+  os-service:
+    url: ${OS_SERVICE_URL:http://localhost:8081}
+  billing-service:
+    url: ${BILLING_SERVICE_URL:http://localhost:8082}
+  execution-service:
+    url: ${EXECUTION_SERVICE_URL:http://localhost:8083}
+  customer-service:
+    url: ${CUSTOMER_SERVICE_URL:http://localhost:8084}
+  catalog-service:
+    url: ${CATALOG_SERVICE_URL:http://localhost:8085}
+  people-service:
+    url: ${PEOPLE_SERVICE_URL:http://localhost:8086}
+  hr-service:
+    url: ${HR_SERVICE_URL:http://localhost:8087}
+  maintenance-service:
+    url: ${MAINTENANCE_SERVICE_URL:http://localhost:8088}
+  notification-service:
+    url: ${NOTIFICATION_SERVICE_URL:http://localhost:8089}
+  operations-service:
+    url: ${OPERATIONS_SERVICE_URL:http://localhost:8090}
+
+# Resilience4j Circuit Breaker
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+        slowCallDurationThreshold: 5s
+        slowCallRateThreshold: 80
+    instances:
+      osServiceCB:
+        baseConfig: default
+      billingServiceCB:
+        baseConfig: default
+      executionServiceCB:
+        baseConfig: default
+      customerServiceCB:
+        baseConfig: default
+      catalogServiceCB:
+        baseConfig: default
+      peopleServiceCB:
+        baseConfig: default
+      hrServiceCB:
+        baseConfig: default
+      maintenanceServiceCB:
+        baseConfig: default
+      notificationServiceCB:
+        baseConfig: default
+      operationsServiceCB:
+        baseConfig: default
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 10s
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, circuitbreakers, gateway
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      enabled: true
+
+# Logging
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+    io.github.resilience4j: INFO
+    br.com.grupo99.gateway: DEBUG

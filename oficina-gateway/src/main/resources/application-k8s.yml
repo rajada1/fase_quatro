@@ -1,0 +1,27 @@
+server:
+  port: 8080
+
+jwt:
+  secret: test-secret-key-for-testing-purposes-only-1234567890abcdef
+
+services:
+  os-service:
+    url: http://os-service.os-service.svc.cluster.local:8081
+  billing-service:
+    url: http://billing-service.billing-service.svc.cluster.local:8082
+  execution-service:
+    url: http://execution-service.execution-service.svc.cluster.local:8083
+  customer-service:
+    url: http://customer-service.customer-service.svc.cluster.local:8084
+  catalog-service:
+    url: http://catalog-service.catalog-service.svc.cluster.local:8085
+  people-service:
+    url: http://people-service.people-service.svc.cluster.local:8086
+  hr-service:
+    url: http://hr-service.hr-service.svc.cluster.local:8087
+  maintenance-service:
+    url: http://maintenance-service.maintenance-service.svc.cluster.local:8088
+  notification-service:
+    url: http://notification-service.notification-service.svc.cluster.local:8089
+  operations-service:
+    url: http://operations-service.operations-service.svc.cluster.local:8090
