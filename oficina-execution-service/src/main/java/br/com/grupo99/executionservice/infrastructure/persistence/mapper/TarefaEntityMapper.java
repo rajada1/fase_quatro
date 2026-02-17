@@ -1,7 +1,6 @@
 package br.com.grupo99.executionservice.infrastructure.persistence.mapper;
 
 import br.com.grupo99.executionservice.domain.model.Tarefa;
-import br.com.grupo99.executionservice.domain.model.StatusTarefa;
 import br.com.grupo99.executionservice.infrastructure.persistence.entity.TarefaEntity;
 import org.springframework.stereotype.Component;
 

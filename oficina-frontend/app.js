@@ -437,7 +437,7 @@ const App = (() => {
                 orcamentoId: val('exec-orcamentoId') || uuid(),
                 mecanicoResponsavel: val('exec-mecanico') || 'Mecânico Teste',
             };
-            const r = await http('POST', `${urls.execution}/api/v1/execucoes`, body);
+            const r = await http('POST', `${urls.execution}/api/v1/execucoes-os`, body);
             if (r.ok) toast('Execução criada!', 'success');
             document.getElementById('exec-results').innerHTML = renderExecucao(r.data);
         },
@@ -446,7 +446,7 @@ const App = (() => {
             const id = val('exec-searchId');
             if (!id) return toast('Informe o ID da execução', 'error');
             const urls = getUrls();
-            const r = await http('GET', `${urls.execution}/api/v1/execucoes/${id}`);
+            const r = await http('GET', `${urls.execution}/api/v1/execucoes-os/${id}`);
             document.getElementById('exec-results').innerHTML = renderExecucao(r.data);
         },
 
@@ -454,13 +454,13 @@ const App = (() => {
             const osId = val('exec-searchOsId');
             if (!osId) return toast('Informe o OS ID', 'error');
             const urls = getUrls();
-            const r = await http('GET', `${urls.execution}/api/v1/execucoes/os/${osId}`);
+            const r = await http('GET', `${urls.execution}/api/v1/execucoes-os/os/${osId}`);
             document.getElementById('exec-results').innerHTML = renderExecList(r.data);
         },
 
         async listarTodas() {
             const urls = getUrls();
-            const r = await http('GET', `${urls.execution}/api/v1/execucoes`);
+            const r = await http('GET', `${urls.execution}/api/v1/execucoes-os`);
             document.getElementById('exec-results').innerHTML = renderExecList(r.data);
         },
 
@@ -468,7 +468,7 @@ const App = (() => {
             const status = val('exec-filterStatus');
             if (!status) return toast('Selecione um status', 'error');
             const urls = getUrls();
-            const r = await http('GET', `${urls.execution}/api/v1/execucoes/status/${status}`);
+            const r = await http('GET', `${urls.execution}/api/v1/execucoes-os/status/${status}`);
             document.getElementById('exec-results').innerHTML = renderExecList(r.data);
         },
 
@@ -476,7 +476,7 @@ const App = (() => {
             const nome = val('exec-searchMecanico');
             if (!nome) return toast('Informe o nome do mecânico', 'error');
             const urls = getUrls();
-            const r = await http('GET', `${urls.execution}/api/v1/execucoes/mecanico/${encodeURIComponent(nome)}`);
+            const r = await http('GET', `${urls.execution}/api/v1/execucoes-os/mecanico/${encodeURIComponent(nome)}`);
             document.getElementById('exec-results').innerHTML = renderExecList(r.data);
         },
 
@@ -484,7 +484,7 @@ const App = (() => {
             const id = val('exec-actionId');
             if (!id) return toast('Informe o ID da execução', 'error');
             const urls = getUrls();
-            const r = await http('PUT', `${urls.execution}/api/v1/execucoes/${id}/iniciar`);
+            const r = await http('PUT', `${urls.execution}/api/v1/execucoes-os/${id}/iniciar`);
             if (r.ok) toast('Execução iniciada!', 'success');
             document.getElementById('exec-results').innerHTML = renderExecucao(r.data);
         },
@@ -494,7 +494,7 @@ const App = (() => {
             if (!id) return toast('Informe o ID da execução', 'error');
             const urls = getUrls();
             const obs = val('exec-obs');
-            let url = `${urls.execution}/api/v1/execucoes/${id}/finalizar`;
+            let url = `${urls.execution}/api/v1/execucoes-os/${id}/finalizar`;
             if (obs) url += `?observacoes=${encodeURIComponent(obs)}`;
             const r = await http('PUT', url);
             if (r.ok) toast('Execução finalizada!', 'success');
@@ -506,7 +506,7 @@ const App = (() => {
             if (!id) return toast('Informe o ID da execução', 'error');
             const urls = getUrls();
             const motivo = val('exec-obs');
-            let url = `${urls.execution}/api/v1/execucoes/${id}/cancelar`;
+            let url = `${urls.execution}/api/v1/execucoes-os/${id}/cancelar`;
             if (motivo) url += `?motivo=${encodeURIComponent(motivo)}`;
             const r = await http('PUT', url);
             if (r.ok) toast('Execução cancelada.', 'success');
@@ -517,7 +517,7 @@ const App = (() => {
             const id = val('exec-actionId');
             if (!id) return toast('Informe o ID da execução', 'error');
             const urls = getUrls();
-            const r = await http('DELETE', `${urls.execution}/api/v1/execucoes/${id}`);
+            const r = await http('DELETE', `${urls.execution}/api/v1/execucoes-os/${id}`);
             if (r.ok) toast('Execução deletada.', 'success');
             document.getElementById('exec-results').innerHTML = '<p class="placeholder">Execução deletada.</p>';
         },
@@ -636,18 +636,18 @@ const App = (() => {
                     orcamentoId: Saga._state.orcId,
                     mecanicoResponsavel: 'João Silva (Saga)',
                 };
-                const execRes = await http('POST', `${urls.execution}/api/v1/execucoes`, execBody);
+                const execRes = await http('POST', `${urls.execution}/api/v1/execucoes-os`, execBody);
                 if (!execRes.ok) throw new Error('Falha ao criar execução');
                 Saga._state.execId = execRes.data.id;
                 Saga._logEntry(`Execução criada: ${execRes.data.id}`, 'success');
 
                 Saga._logEntry('Iniciando execução...', 'info');
-                const iniRes = await http('PUT', `${urls.execution}/api/v1/execucoes/${Saga._state.execId}/iniciar`);
+                const iniRes = await http('PUT', `${urls.execution}/api/v1/execucoes-os/${Saga._state.execId}/iniciar`);
                 if (!iniRes.ok) throw new Error('Falha ao iniciar execução');
                 Saga._logEntry('Execução iniciada!', 'success');
 
                 Saga._logEntry('Finalizando execução...', 'info');
-                const finRes = await http('PUT', `${urls.execution}/api/v1/execucoes/${Saga._state.execId}/finalizar`);
+                const finRes = await http('PUT', `${urls.execution}/api/v1/execucoes-os/${Saga._state.execId}/finalizar`);
                 if (!finRes.ok) throw new Error('Falha ao finalizar execução');
                 Saga._logEntry('Execução finalizada!', 'success');
                 Saga._setStep(5, 'done');

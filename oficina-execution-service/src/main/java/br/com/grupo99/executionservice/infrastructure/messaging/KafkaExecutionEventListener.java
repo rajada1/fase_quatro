@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Map;
+
 import java.util.UUID;
 
 /**
@@ -31,13 +31,10 @@ import java.util.UUID;
 public class KafkaExecutionEventListener {
 
     private final ExecucaoOSRepository execucaoOSRepository;
-    private final ExecutionEventPublisherPort eventPublisher;
 
     public KafkaExecutionEventListener(
-            ExecucaoOSRepository execucaoOSRepository,
-            ExecutionEventPublisherPort eventPublisher) {
+            ExecucaoOSRepository execucaoOSRepository) {
         this.execucaoOSRepository = execucaoOSRepository;
-        this.eventPublisher = eventPublisher;
     }
 
     /**
@@ -117,12 +114,9 @@ public class KafkaExecutionEventListener {
     /**
      * Saga Step 2.1: OS criada → Criar registro de execução
      */
-    @SuppressWarnings("unchecked")
     private void handleOSCriada(ConsumerRecord<String, Object> record) {
         try {
             UUID osId = UUID.fromString(record.key());
-            Map<String, Object> payload = (Map<String, Object>) record.value();
-
             log.info("🔧 Processando OS_CRIADA. OS ID: {}", osId);
 
             // Idempotência: verificar se execução já existe
@@ -154,12 +148,9 @@ public class KafkaExecutionEventListener {
     /**
      * Saga Step 5: Orçamento aprovado → Iniciar execução
      */
-    @SuppressWarnings("unchecked")
     private void handleOrcamentoAprovado(ConsumerRecord<String, Object> record) {
         try {
             UUID osId = UUID.fromString(record.key());
-            Map<String, Object> payload = (Map<String, Object>) record.value();
-
             String orcamentoIdStr = extractHeader(record, "orcamentoId");
             UUID orcamentoId = orcamentoIdStr != null && !orcamentoIdStr.equals("UNKNOWN")
                     ? UUID.fromString(orcamentoIdStr)
@@ -187,7 +178,6 @@ public class KafkaExecutionEventListener {
     /**
      * Saga Compensação: Orçamento rejeitado → Cancelar execução
      */
-    @SuppressWarnings("unchecked")
     private void handleOrcamentoRejeitado(ConsumerRecord<String, Object> record) {
         try {
             UUID osId = UUID.fromString(record.key());
@@ -212,7 +202,6 @@ public class KafkaExecutionEventListener {
     /**
      * Saga Compensação: OS cancelada → Cancelar execução
      */
-    @SuppressWarnings("unchecked")
     private void handleOSCancelada(ConsumerRecord<String, Object> record) {
         try {
             UUID osId = UUID.fromString(record.key());
@@ -254,6 +243,8 @@ public class KafkaExecutionEventListener {
                 record.offset(),
                 record.key(),
                 e.getMessage());
-        // TODO: Implementar envio para Dead Letter Topic
+        // Re-throw para acionar o DefaultErrorHandler com DeadLetterPublishingRecoverer
+        // (configurado em KafkaConfig)
+        throw new RuntimeException(e);
     }
 }

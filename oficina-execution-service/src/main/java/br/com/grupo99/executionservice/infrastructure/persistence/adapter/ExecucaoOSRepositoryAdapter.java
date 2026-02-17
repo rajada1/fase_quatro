@@ -39,6 +39,7 @@ public class ExecucaoOSRepositoryAdapter implements ExecucaoOSRepository {
     }
 
     @Override
+    @SuppressWarnings("null")
     public ExecucaoOS save(ExecucaoOS execucaoOS) {
         ExecucaoOSEntity entity = mapper.toEntity(execucaoOS);
         ExecucaoOSEntity saved = postgresRepository.save(entity);
@@ -46,6 +47,7 @@ public class ExecucaoOSRepositoryAdapter implements ExecucaoOSRepository {
     }
 
     @Override
+    @SuppressWarnings("null")
     public Optional<ExecucaoOS> findById(UUID id) {
         return postgresRepository.findById(id)
                 .map(mapper::toDomain);
@@ -79,6 +81,7 @@ public class ExecucaoOSRepositoryAdapter implements ExecucaoOSRepository {
     }
 
     @Override
+    @SuppressWarnings("null")
     public void deleteById(UUID id) {
         postgresRepository.deleteById(id);
     }
@@ -89,6 +92,7 @@ public class ExecucaoOSRepositoryAdapter implements ExecucaoOSRepository {
     }
 
     @Override
+    @SuppressWarnings("null")
     public boolean existsById(UUID id) {
         return postgresRepository.existsById(id);
     }

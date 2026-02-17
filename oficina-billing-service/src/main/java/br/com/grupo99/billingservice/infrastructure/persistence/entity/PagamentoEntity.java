@@ -40,6 +40,10 @@ public class PagamentoEntity {
 
     private Long mercadoPagoPaymentId;
 
+    private String mercadoPagoPreferenceId;
+
+    private String initPoint;
+
     private Instant dataPagamento;
 
     private Instant dataEstorno;

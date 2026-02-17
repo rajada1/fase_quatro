@@ -7,10 +7,8 @@ import io.cucumber.java.pt.Quando;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import br.com.grupo99.executionservice.config.BddTestConfiguration;
 
 import java.math.BigDecimal;
@@ -34,7 +32,9 @@ public class SagaExecucaoSteps {
     private List<Map<String, String>> tarefas = new ArrayList<>();
     private List<Map<String, String>> pecas = new ArrayList<>();
     private String mecanicoResponsavel;
+    @SuppressWarnings("unused")
     private boolean agendamentoFeito;
+    @SuppressWarnings("unused")
     private boolean trabalhoIniciado;
     private String motivoFalha;
 

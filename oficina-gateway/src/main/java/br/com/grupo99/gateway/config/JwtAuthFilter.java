@@ -15,7 +15,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 
 @Component
@@ -50,7 +50,8 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
 
         try {
             String token = authHeader.substring(7);
-            SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+            byte[] decodedKey = Base64.getDecoder().decode(jwtSecret);
+            SecretKey key = Keys.hmacShaKeyFor(decodedKey);
             Claims claims = Jwts.parser()
                     .verifyWith(key)
                     .build()

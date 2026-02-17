@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:execution_db}
     username: ${POSTGRES_USER:postgres}
-    password: ${POSTGRES_PASSWORD:postgres123}
+    password: ${POSTGRES_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -60,7 +60,7 @@ spring:
         secret-key: ${AWS_SECRET_ACCESS_KEY:test}
 # JWT Configuration
 jwt:
-  secret: ${JWT_SECRET:base64EncodedSecretKeyWithMinimumOf256BitsForHS256SigningAlgorithm}
+  secret: ${JWT_SECRET:YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY3ODkwYWJjZGVmZw==}
   expiration:
     ms: ${JWT_EXPIRATION_MS:3600000}
 

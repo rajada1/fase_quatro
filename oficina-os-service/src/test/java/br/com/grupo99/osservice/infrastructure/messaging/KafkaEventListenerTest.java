@@ -58,9 +58,6 @@ class KafkaEventListenerTest {
     @MockBean
     private OrdemServicoRepository ordemServicoRepository;
 
-    @Autowired
-    private KafkaEventListener kafkaEventListener;
-
     private KafkaTemplate<String, Object> kafkaTemplate;
 
     private OrdemServico mockOrdemServico;

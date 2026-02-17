@@ -8,9 +8,9 @@ import java.util.UUID;
  * DTO para requisição de criação/atualização de uma Execução de OS.
  */
 public record ExecucaoOSRequestDTO(
-        @Schema(description = "ID da Ordem de Serviço", required = true) UUID osId,
+                @Schema(description = "ID da Ordem de Serviço", requiredMode = Schema.RequiredMode.REQUIRED) UUID osId,
 
-        @Schema(description = "ID do Orçamento", required = true) UUID orcamentoId,
+                @Schema(description = "ID do Orçamento", requiredMode = Schema.RequiredMode.REQUIRED) UUID orcamentoId,
 
-        @Schema(description = "Nome do mecânico responsável", required = true) String mecanico) {
+                @Schema(description = "Nome do mecânico responsável", requiredMode = Schema.RequiredMode.REQUIRED) String mecanico) {
 }

@@ -1,27 +1,33 @@
 version: "3.8"
 
 # =========================================================
-#  Docker Compose UNIFICADO - Oficina Mecânica
-#  Roda OS Service + Billing Service + Execution Service
-#  com um único cluster Kafka e bancos de dados separados
+#  Docker Compose COMPLETO - Oficina Mecânica
+#  Roda TODOS os microserviços + infraestrutura
+#  (Kafka, PostgreSQL, DynamoDB, Gateway)
+#
+#  Uso: docker compose up -d --build
+#  Parar: docker compose down
+#  Parar + remover volumes: docker compose down -v
 # =========================================================
 
 services:
 
-  # ======================== INFRA ========================
+  # ======================== INFRAESTRUTURA ========================
 
-  # PostgreSQL - OS Service (porta 5432)
-  postgres-os:
+  # PostgreSQL Principal (porta 5432 dentro do container)
+  # Bancos: osservice_db, customer_db, notification_db,
+  #         operations_db, people_db, hr_db, maintenance_db
+  postgres-main:
     image: postgres:16-alpine
-    container_name: oficina-postgres-os
+    container_name: oficina-postgres-main
     environment:
-      POSTGRES_DB: osservice_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
     volumes:
-      - postgres_os_data:/var/lib/postgresql/data
+      - postgres_main_data:/var/lib/postgresql/data
+      - ./init-databases.sql:/docker-entrypoint-initdb.d/init-databases.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -50,20 +56,71 @@ services:
     networks:
       - oficina-network
 
-  # DynamoDB Local - Billing Service (porta 8000)
+  # DynamoDB Local - Billing + Catalog Service (porta 8000)
   dynamodb-local:
     image: amazon/dynamodb-local:latest
     container_name: oficina-dynamodb
     ports:
       - "8000:8000"
-    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /data"
-    volumes:
-      - dynamodb_data:/data
+    command: "-jar DynamoDBLocal.jar -sharedDb -inMemory"
     healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:8000 || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    networks:
+      - oficina-network
+
+  # DynamoDB Init - Cria tabelas locais
+  dynamodb-init:
+    image: curlimages/curl:latest
+    container_name: oficina-dynamodb-init
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        AUTH='Authorization: AWS4-HMAC-SHA256 Credential=fakeAccessKey/20260101/us-east-1/dynamodb/aws4_request, SignedHeaders=content-type;host;x-amz-target, Signature=fake' &&
+        echo 'Waiting for DynamoDB Local...' &&
+        sleep 3 &&
+        echo 'Creating table orcamentos...' &&
+        curl -s -X POST http://dynamodb-local:8000 \
+          -H 'Content-Type: application/x-amz-json-1.0' \
+          -H 'X-Amz-Target: DynamoDB_20120810.CreateTable' \
+          -H "$$AUTH" \
+          -d '{"TableName":"orcamentos","KeySchema":[{"AttributeName":"id","KeyType":"HASH"}],"AttributeDefinitions":[{"AttributeName":"id","AttributeType":"S"}],"BillingMode":"PAY_PER_REQUEST"}' &&
+        echo '' &&
+        echo 'Creating table pagamentos...' &&
+        curl -s -X POST http://dynamodb-local:8000 \
+          -H 'Content-Type: application/x-amz-json-1.0' \
+          -H 'X-Amz-Target: DynamoDB_20120810.CreateTable' \
+          -H "$$AUTH" \
+          -d '{"TableName":"pagamentos","KeySchema":[{"AttributeName":"id","KeyType":"HASH"}],"AttributeDefinitions":[{"AttributeName":"id","AttributeType":"S"}],"BillingMode":"PAY_PER_REQUEST"}' &&
+        echo '' &&
+        echo 'Creating table pecas...' &&
+        curl -s -X POST http://dynamodb-local:8000 \
+          -H 'Content-Type: application/x-amz-json-1.0' \
+          -H 'X-Amz-Target: DynamoDB_20120810.CreateTable' \
+          -H "$$AUTH" \
+          -d '{"TableName":"pecas","KeySchema":[{"AttributeName":"id","KeyType":"HASH"}],"AttributeDefinitions":[{"AttributeName":"id","AttributeType":"S"}],"BillingMode":"PAY_PER_REQUEST"}' &&
+        echo '' &&
+        echo 'Creating table servicos...' &&
+        curl -s -X POST http://dynamodb-local:8000 \
+          -H 'Content-Type: application/x-amz-json-1.0' \
+          -H 'X-Amz-Target: DynamoDB_20120810.CreateTable' \
+          -H "$$AUTH" \
+          -d '{"TableName":"servicos","KeySchema":[{"AttributeName":"id","KeyType":"HASH"}],"AttributeDefinitions":[{"AttributeName":"id","AttributeType":"S"}],"BillingMode":"PAY_PER_REQUEST"}' &&
+        echo '' &&
+        echo 'Listing tables...' &&
+        curl -s -X POST http://dynamodb-local:8000 \
+          -H 'Content-Type: application/x-amz-json-1.0' \
+          -H 'X-Amz-Target: DynamoDB_20120810.ListTables' \
+          -H "$$AUTH" \
+          -d '{}' &&
+        echo '' &&
+        echo 'DynamoDB tables ready!'
+    depends_on:
+      dynamodb-local:
+        condition: service_healthy
     networks:
       - oficina-network
 
@@ -140,7 +197,7 @@ services:
     networks:
       - oficina-network
 
-  # Kafka UI (debug/monitoramento)
+  # Kafka UI (debug/monitoramento) - http://localhost:9090
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     container_name: oficina-kafka-ui
@@ -165,19 +222,22 @@ services:
       dockerfile: Dockerfile
     container_name: oficina-os-service
     environment:
-      DB_HOST: postgres-os
-      DB_PORT: 5432
-      DB_NAME: osservice_db
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-main:5432/osservice_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_FLYWAY_ENABLED: "true"
+      SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      SPRING_KAFKA_CONSUMER_GROUP_ID: os-service-group
       KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      KAFKA_CONSUMER_GROUP: os-service-group
-      SPRING_PROFILES_ACTIVE: dev
+      SECURITY_DISABLED: "true"
       LOG_LEVEL: INFO
+      SERVER_PORT: 8081
     ports:
       - "8081:8081"
     depends_on:
-      postgres-os:
+      postgres-main:
         condition: service_healthy
       kafka:
         condition: service_healthy
@@ -190,8 +250,8 @@ services:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8081/actuator/health"]
       interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 60s
+      retries: 5
+      start_period: 90s
 
   # Billing Service (porta 8082)
   billing-service:
@@ -202,14 +262,19 @@ services:
     environment:
       AWS_DYNAMODB_ENDPOINT: http://dynamodb-local:8000
       AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: fakeAccessKey
+      AWS_SECRET_ACCESS_KEY: fakeSecretKey
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
       KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      SPRING_PROFILES_ACTIVE: local
+      SECURITY_DISABLED: "true"
       LOG_LEVEL: INFO
+      SERVER_PORT: 8082
+      MERCADOPAGO_ACCESS_TOKEN: APP_USR-2277051623873712-021601-718706927f815175b6eb2f9dcb9ff053-1540002520
     ports:
       - "8082:8082"
     depends_on:
-      dynamodb-local:
-        condition: service_healthy
+      dynamodb-init:
+        condition: service_completed_successfully
       kafka:
         condition: service_healthy
       kafka-init:
@@ -218,11 +283,11 @@ services:
       - oficina-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8082/api/v1/actuator/health"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8082/actuator/health"]
       interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 60s
+      retries: 5
+      start_period: 90s
 
   # Execution Service (porta 8083)
   execution-service:
@@ -231,14 +296,17 @@ services:
       dockerfile: Dockerfile
     container_name: oficina-execution-service
     environment:
-      POSTGRES_HOST: postgres-execution
-      POSTGRES_PORT: 5432
-      POSTGRES_DB: execution_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres123
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-execution:5432/execution_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres123
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_FLYWAY_ENABLED: "true"
+      SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
       KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      SPRING_PROFILES_ACTIVE: local
+      SECURITY_DISABLED: "true"
       LOG_LEVEL: INFO
+      SERVER_PORT: 8083
     ports:
       - "8083:8083"
     depends_on:
@@ -252,16 +320,264 @@ services:
       - oficina-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8083/api/v1/actuator/health"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8083/actuator/health"]
       interval: 30s
       timeout: 10s
-      retries: 3
+      retries: 5
+      start_period: 90s
+
+  # Customer Service (porta 8084)
+  customer-service:
+    build:
+      context: ./oficina-customer-service
+      dockerfile: Dockerfile
+    container_name: oficina-customer-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-main:5432/customer_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      SECURITY_DISABLED: "true"
+      LOG_LEVEL: INFO
+      SERVER_PORT: 8084
+    ports:
+      - "8084:8084"
+    depends_on:
+      postgres-main:
+        condition: service_healthy
+    networks:
+      - oficina-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8084/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  # Catalog Service (porta 8085)
+  catalog-service:
+    build:
+      context: ./oficina-catalog-service
+      dockerfile: Dockerfile
+    container_name: oficina-catalog-service
+    environment:
+      AWS_DYNAMODB_ENDPOINT: http://dynamodb-local:8000
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: fakeAccessKey
+      AWS_SECRET_ACCESS_KEY: fakeSecretKey
+      SECURITY_DISABLED: "true"
+      LOG_LEVEL: INFO
+      SERVER_PORT: 8085
+    ports:
+      - "8085:8085"
+    depends_on:
+      dynamodb-init:
+        condition: service_completed_successfully
+    networks:
+      - oficina-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8085/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  # People Service (porta 8086)
+  people-service:
+    build:
+      context: ./oficina-people-service
+      dockerfile: Dockerfile
+    container_name: oficina-people-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-main:5432/people_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      SECURITY_DISABLED: "true"
+      LOG_LEVEL: INFO
+      SERVER_PORT: 8086
+    ports:
+      - "8086:8086"
+    depends_on:
+      postgres-main:
+        condition: service_healthy
+    networks:
+      - oficina-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8086/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  # HR Service (porta 8087)
+  hr-service:
+    build:
+      context: ./oficina-hr-service
+      dockerfile: Dockerfile
+    container_name: oficina-hr-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-main:5432/hr_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      SECURITY_DISABLED: "true"
+      LOG_LEVEL: INFO
+      SERVER_PORT: 8087
+    ports:
+      - "8087:8087"
+    depends_on:
+      postgres-main:
+        condition: service_healthy
+    networks:
+      - oficina-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8087/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  # Maintenance Service (porta 8088)
+  maintenance-service:
+    build:
+      context: ./oficina-maintenance-service
+      dockerfile: Dockerfile
+    container_name: oficina-maintenance-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-main:5432/maintenance_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      SECURITY_DISABLED: "true"
+      LOG_LEVEL: INFO
+      SERVER_PORT: 8088
+    ports:
+      - "8088:8088"
+    depends_on:
+      postgres-main:
+        condition: service_healthy
+    networks:
+      - oficina-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8088/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  # Notification Service (porta 8089)
+  notification-service:
+    build:
+      context: ./oficina-notification-service
+      dockerfile: Dockerfile
+    container_name: oficina-notification-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-main:5432/notification_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      SECURITY_DISABLED: "true"
+      LOG_LEVEL: INFO
+      SERVER_PORT: 8089
+    ports:
+      - "8089:8089"
+    depends_on:
+      postgres-main:
+        condition: service_healthy
+    networks:
+      - oficina-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8089/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  # Operations Service (porta 8090)
+  operations-service:
+    build:
+      context: ./oficina-operations-service
+      dockerfile: Dockerfile
+    container_name: oficina-operations-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-main:5432/operations_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      SECURITY_DISABLED: "true"
+      LOG_LEVEL: INFO
+      SERVER_PORT: 8090
+    ports:
+      - "8090:8090"
+    depends_on:
+      postgres-main:
+        condition: service_healthy
+    networks:
+      - oficina-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8090/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  # ======================== GATEWAY ========================
+
+  # API Gateway (porta 8080) - Ponto de entrada único
+  gateway:
+    build:
+      context: ./oficina-gateway
+      dockerfile: Dockerfile
+    container_name: oficina-gateway
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      JWT_SECRET: YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY3ODkwYWJjZGVmZw==
+      OS_SERVICE_URL: http://os-service:8081
+      BILLING_SERVICE_URL: http://billing-service:8082
+      EXECUTION_SERVICE_URL: http://execution-service:8083
+      CUSTOMER_SERVICE_URL: http://customer-service:8084
+      CATALOG_SERVICE_URL: http://catalog-service:8085
+      PEOPLE_SERVICE_URL: http://people-service:8086
+      HR_SERVICE_URL: http://hr-service:8087
+      MAINTENANCE_SERVICE_URL: http://maintenance-service:8088
+      NOTIFICATION_SERVICE_URL: http://notification-service:8089
+      OPERATIONS_SERVICE_URL: http://operations-service:8090
+    ports:
+      - "8080:8080"
+    depends_on:
+      os-service:
+        condition: service_started
+      billing-service:
+        condition: service_started
+      execution-service:
+        condition: service_started
+    networks:
+      - oficina-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
       start_period: 60s
 
 volumes:
-  postgres_os_data:
+  postgres_main_data:
   postgres_exec_data:
-  dynamodb_data:
 
 networks:
   oficina-network:

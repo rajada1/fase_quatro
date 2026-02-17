@@ -37,6 +37,10 @@ public class Pagamento {
 
     private Long mercadoPagoPaymentId; // ID do pagamento no Mercado Pago
 
+    private String mercadoPagoPreferenceId; // ID da preferência no Mercado Pago
+
+    private String initPoint; // Link de pagamento do Mercado Pago
+
     private Instant dataPagamento;
 
     private Instant dataEstorno;
@@ -137,7 +141,16 @@ public class Pagamento {
      * @param mercadoPagoPaymentId ID do pagamento no MP
      * @throws IllegalStateException se transição não for válida
      */
+    /**
+     * Marca o pagamento como processando (enviado ao Mercado Pago).
+     *
+     * @param mercadoPagoPaymentId ID do pagamento no MP
+     * @throws IllegalStateException se transição não for válida
+     */
     public void processar(Long mercadoPagoPaymentId) {
+        if (this.status == StatusPagamento.PROCESSANDO) {
+            return;
+        }
         validarTransicao(StatusPagamento.PROCESSANDO);
 
         this.status = StatusPagamento.PROCESSANDO;
@@ -150,6 +163,9 @@ public class Pagamento {
      * @throws IllegalStateException se transição não for válida
      */
     public void confirmar() {
+        if (this.status == StatusPagamento.CONFIRMADO) {
+            return;
+        }
         validarTransicao(StatusPagamento.CONFIRMADO);
 
         this.status = StatusPagamento.CONFIRMADO;
@@ -163,6 +179,9 @@ public class Pagamento {
      * @throws IllegalStateException se transição não for válida
      */
     public void estornar(String motivo) {
+        if (this.status == StatusPagamento.ESTORNADO) {
+            return;
+        }
         validarTransicao(StatusPagamento.ESTORNADO);
 
         this.status = StatusPagamento.ESTORNADO;
@@ -185,6 +204,9 @@ public class Pagamento {
      * @throws IllegalStateException se transição não for válida
      */
     public void cancelar() {
+        if (this.status == StatusPagamento.CANCELADO) {
+            return;
+        }
         validarTransicao(StatusPagamento.CANCELADO);
 
         this.status = StatusPagamento.CANCELADO;

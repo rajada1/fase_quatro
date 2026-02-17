@@ -15,11 +15,11 @@ import java.util.UUID;
  * REST Controller para Pagamento
  * 
  * ✅ CLEAN ARCHITECTURE: Controller chama Application Service
- * ✅ MERCADO PAGO: Endpoint de webhook para notificações
+ * ✅ MERCADO PAGO: Gera link de pagamento e permite checar status
  */
 @Slf4j
 @RestController
-@RequestMapping("/pagamentos")
+@RequestMapping("/api/v1/pagamentos")
 public class PagamentoController {
 
     private final PagamentoApplicationService service;
@@ -30,10 +30,10 @@ public class PagamentoController {
 
     /**
      * POST /api/v1/pagamentos
-     * Registrar novo pagamento (cria no Mercado Pago)
+     * Registrar novo pagamento — gera link de pagamento via Mercado Pago
      */
     @PostMapping
-    public ResponseEntity<PagamentoResponse> registrar(
+    public ResponseEntity<?> registrar(
             @RequestBody CreatePagamentoRequest request) {
         log.info("POST /pagamentos - registrando pagamento para orçamento: {}", request.getOrcamentoId());
 
@@ -42,6 +42,40 @@ public class PagamentoController {
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
             log.error("Erro ao registrar pagamento", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of(
+                            "error", "Erro ao registrar pagamento",
+                            "message", e.getMessage() != null ? e.getMessage() : "Erro interno do servidor"
+                    ));
+        }
+    }
+
+    /**
+     * GET /api/v1/pagamentos
+     * Listar todos os pagamentos
+     */
+    @GetMapping
+    public ResponseEntity<java.util.List<PagamentoResponse>> listarTodos() {
+        log.info("GET /pagamentos - listando todos");
+        return ResponseEntity.ok(service.listarTodos());
+    }
+
+    /**
+     * GET /api/v1/pagamentos/{id}/checar
+     * Checar status de pagamento no Mercado Pago
+     *
+     * Consulta se o cliente já pagou via link.
+     */
+    @GetMapping("/{id}/checar")
+    public ResponseEntity<PagamentoResponse> checarPagamento(
+            @PathVariable UUID id) {
+        log.info("GET /pagamentos/{}/checar - checando pagamento no Mercado Pago", id);
+
+        try {
+            PagamentoResponse response = service.checarPagamento(id);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Erro ao checar pagamento", e);
             throw e;
         }
     }

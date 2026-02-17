@@ -142,6 +142,13 @@ public class DynamoDbPagamentoRepository {
     }
 
     /**
+     * Lista todos os PagamentoEntities (scan completo).
+     */
+    public List<PagamentoEntity> findAll() {
+        return table.scan().items().stream().collect(Collectors.toList());
+    }
+
+    /**
      * Deleta PagamentoEntity por ID.
      */
     public void deleteById(String id) {

@@ -74,6 +74,13 @@ public interface PagamentoRepository {
     Optional<Pagamento> findByMercadoPagoPaymentId(Long mercadoPagoPaymentId);
 
     /**
+     * Lista todos os pagamentos.
+     *
+     * @return lista de todos os pagamentos
+     */
+    List<Pagamento> findAll();
+
+    /**
      * Deleta um pagamento.
      *
      * @param id ID do pagamento a ser deletado

@@ -119,4 +119,14 @@ public class OrcamentoController {
             throw e;
         }
     }
+
+    /**
+     * GET /api/v1/orcamentos
+     * Listar todos os orçamentos
+     */
+    @GetMapping
+    public ResponseEntity<java.util.List<OrcamentoResponse>> listarTodos() {
+        log.info("GET /orcamentos - listando todos");
+        return ResponseEntity.ok(service.listarTodos());
+    }
 }

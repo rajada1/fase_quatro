@@ -9,11 +9,11 @@ import java.util.UUID;
  * DTO para requisição de criação/atualização de um Uso de Peça.
  */
 public record UsoPecaRequestDTO(
-        @Schema(description = "ID da peça", required = true) UUID pecaId,
+                @Schema(description = "ID da peça", requiredMode = Schema.RequiredMode.REQUIRED) UUID pecaId,
 
-        @Schema(description = "Descrição da peça", required = true) String descricao,
+                @Schema(description = "Descrição da peça", requiredMode = Schema.RequiredMode.REQUIRED) String descricao,
 
-        @Schema(description = "Quantidade utilizada", required = true) Integer quantidade,
+                @Schema(description = "Quantidade utilizada", requiredMode = Schema.RequiredMode.REQUIRED) Integer quantidade,
 
-        @Schema(description = "Valor unitário", required = true) BigDecimal valorUnitario) {
+                @Schema(description = "Valor unitário", requiredMode = Schema.RequiredMode.REQUIRED) BigDecimal valorUnitario) {
 }

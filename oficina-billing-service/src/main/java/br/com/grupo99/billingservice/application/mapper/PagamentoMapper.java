@@ -50,6 +50,8 @@ public class PagamentoMapper {
                 .formaPagamento(pagamento.getFormaPagamento().name())
                 .comprovante(pagamento.getComprovante())
                 .mercadoPagoPaymentId(pagamento.getMercadoPagoPaymentId())
+                .mercadoPagoPreferenceId(pagamento.getMercadoPagoPreferenceId())
+                .initPoint(pagamento.getInitPoint())
                 .dataPagamento(pagamento.getDataPagamento())
                 .dataEstorno(pagamento.getDataEstorno())
                 .motivoEstorno(pagamento.getMotivoEstorno())

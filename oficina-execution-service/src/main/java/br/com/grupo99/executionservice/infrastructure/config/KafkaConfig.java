@@ -39,6 +39,7 @@ import java.util.Map;
 @Slf4j
 @Configuration
 @EnableKafka
+@SuppressWarnings("null")
 public class KafkaConfig {
 
     // Nomes dos tópicos

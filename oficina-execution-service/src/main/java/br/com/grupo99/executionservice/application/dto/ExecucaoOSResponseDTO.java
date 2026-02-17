@@ -5,9 +5,7 @@ import br.com.grupo99.executionservice.domain.model.StatusExecucao;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * DTO para resposta de uma Execução de OS.

@@ -31,6 +31,8 @@ public class PagamentoResponse {
     private Instant dataEstorno;
     private String motivoEstorno;
     private Long mercadoPagoPaymentId;
+    private String mercadoPagoPreferenceId;
+    private String initPoint;
     private String qrCode;
     private String ticketUrl;
 }

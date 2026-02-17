@@ -4,7 +4,7 @@ import br.com.grupo99.osservice.application.events.OSCanceladaEvent;
 import br.com.grupo99.osservice.application.events.OSCriadaEvent;
 import br.com.grupo99.osservice.application.events.StatusMudadoEvent;
 import br.com.grupo99.osservice.infrastructure.config.KafkaConfig;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
+
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
@@ -52,12 +52,6 @@ class KafkaEventPublisherTest {
 
     @Autowired
     private EmbeddedKafkaBroker embeddedKafkaBroker;
-
-    @Autowired
-    private KafkaTemplate<String, Object> kafkaTemplate;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Autowired
     private EventPublisherPort eventPublisher; // Usar o bean do Spring com Resilience4j

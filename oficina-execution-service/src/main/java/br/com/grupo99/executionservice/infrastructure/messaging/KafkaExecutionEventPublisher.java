@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Publicador de eventos Kafka para o Execution Service
@@ -170,22 +169,7 @@ public class KafkaExecutionEventPublisher implements ExecutionEventPublisherPort
 
     // ===================== MÉTODOS AUXILIARES =====================
 
-    private void sendAsync(ProducerRecord<String, Object> record, String eventType, String id) {
-        CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(record);
-
-        future.whenComplete((result, ex) -> {
-            if (ex == null) {
-                log.info("✅ Evento {} publicado no Kafka. ID: {}, Topic: {}, Partition: {}, Offset: {}",
-                        eventType, id,
-                        result.getRecordMetadata().topic(),
-                        result.getRecordMetadata().partition(),
-                        result.getRecordMetadata().offset());
-            } else {
-                log.error("❌ Erro ao publicar evento {}: {}", eventType, ex.getMessage(), ex);
-            }
-        });
-    }
-
+    @SuppressWarnings("null")
     private void sendSync(ProducerRecord<String, Object> record, String eventType, String id) {
         try {
             SendResult<String, Object> result = kafkaTemplate.send(record).get();

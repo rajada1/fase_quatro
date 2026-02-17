@@ -24,7 +24,7 @@ import java.util.UUID;
  * Toda lógica de negócio permanece na camada de domínio.
  */
 @RestController
-@RequestMapping("/api/v1/execucoes-os")
+@RequestMapping("/execucoes-os")
 @Tag(name = "Execução de OS", description = "Endpoints para gerenciar execução de ordens de serviço")
 public class ExecucaoOSController {
 

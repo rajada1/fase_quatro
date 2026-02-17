@@ -112,6 +112,18 @@ public class PagamentoRepositoryAdapter implements PagamentoRepository {
     }
 
     /**
+     * Lista todos os Pagamentos
+     */
+    @Override
+    public List<Pagamento> findAll() {
+        log.debug("Listando todos os pagamentos");
+        var entities = dynamoDbRepository.findAll();
+        return entities.stream()
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Deleta um Pagamento
      */
     @Override

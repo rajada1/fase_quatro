@@ -10,19 +10,19 @@ import java.math.BigDecimal;
 public interface MercadoPagoPort {
 
     /**
-     * Cria um pagamento no Mercado Pago.
+     * Cria uma preferência de pagamento no Mercado Pago (gera link de pagamento).
      *
      * @param descricao      descrição do pagamento (ex: "Pagamento OS #123")
      * @param valor          valor do pagamento
      * @param payerEmail     email do pagador
-     * @param formaPagamento forma de pagamento (PIX, CARTAO_CREDITO, etc)
-     * @return resultado com dados do pagamento criado no MP
+     * @param externalReference referência externa (ex: pagamentoId)
+     * @return resultado com link de pagamento e ID da preferência
      */
-    MercadoPagoPaymentResult criarPagamento(String descricao, BigDecimal valor,
-            String payerEmail, String formaPagamento);
+    MercadoPagoPreferenceResult criarPreferencia(String descricao, BigDecimal valor,
+            String payerEmail, String externalReference);
 
     /**
-     * Consulta o status de um pagamento no Mercado Pago.
+     * Consulta o status de um pagamento no Mercado Pago pelo ID do pagamento.
      *
      * @param paymentId ID do pagamento no MP
      * @return resultado com status atualizado
@@ -30,7 +30,24 @@ public interface MercadoPagoPort {
     MercadoPagoPaymentResult consultarPagamento(Long paymentId);
 
     /**
-     * Resultado de uma operação no Mercado Pago.
+     * Busca pagamentos associados a uma preferência (por external_reference).
+     *
+     * @param externalReference referência externa usada na criação da preferência
+     * @return resultado com status do pagamento encontrado (ou null se nenhum)
+     */
+    MercadoPagoPaymentResult buscarPagamentoPorReferencia(String externalReference);
+
+    /**
+     * Resultado da criação de uma preferência no Mercado Pago.
+     */
+    record MercadoPagoPreferenceResult(
+            String preferenceId,
+            String initPoint,
+            String sandboxInitPoint) {
+    }
+
+    /**
+     * Resultado de uma consulta de pagamento no Mercado Pago.
      */
     record MercadoPagoPaymentResult(
             Long paymentId,
