@@ -4,7 +4,7 @@
  *  CRUD para /api/v1/pecas e /api/v1/servicos (Catalog Service :8085)
  * ═══════════════════════════════════════════════════════
  */
-const CatalogoModule = (() => {
+const Catalogo = (() => {
 
     const render = () => `
         <div class="panel-header">
@@ -13,8 +13,8 @@ const CatalogoModule = (() => {
         </div>
 
         <div class="sub-tabs">
-            <button class="sub-tab active" data-subtab="pecas" onclick="CatalogoModule.switchTab('pecas')">🔩 Peças</button>
-            <button class="sub-tab" data-subtab="servicos" onclick="CatalogoModule.switchTab('servicos')">🛠️ Serviços</button>
+            <button class="sub-tab active" data-subtab="pecas" onclick="Catalogo.switchTab('pecas')">🔩 Peças</button>
+            <button class="sub-tab" data-subtab="servicos" onclick="Catalogo.switchTab('servicos')">🛠️ Serviços</button>
         </div>
 
         <!-- Peças Sub-Panel -->
@@ -48,7 +48,7 @@ const CatalogoModule = (() => {
                             <input type="text" id="peca-desc" placeholder="Descrição da peça (opcional)">
                         </div>
                     </div>
-                    <button class="btn btn-primary" onclick="CatalogoModule.criarPeca()">Cadastrar Peça</button>
+                    <button class="btn btn-primary" onclick="Catalogo.criarPeca()">Cadastrar Peça</button>
                 </div>
 
                 <div class="card">
@@ -68,18 +68,18 @@ const CatalogoModule = (() => {
                         </div>
                     </div>
                     <div class="btn-row">
-                        <button class="btn btn-secondary" onclick="CatalogoModule.buscarPecaPorId()">Por ID</button>
-                        <button class="btn btn-secondary" onclick="CatalogoModule.listarPecas()">Listar Todas</button>
-                        <button class="btn btn-secondary" onclick="CatalogoModule.listarPecasAtivas()">Ativas</button>
-                        <button class="btn btn-secondary" onclick="CatalogoModule.buscarPecaCategoria()">Por Categoria</button>
-                        <button class="btn btn-secondary" onclick="CatalogoModule.buscarPecaMarca()">Por Marca</button>
+                        <button class="btn btn-secondary" onclick="Catalogo.buscarPecaPorId()">Por ID</button>
+                        <button class="btn btn-secondary" onclick="Catalogo.listarPecas()">Listar Todas</button>
+                        <button class="btn btn-secondary" onclick="Catalogo.listarPecasAtivas()">Ativas</button>
+                        <button class="btn btn-secondary" onclick="Catalogo.buscarPecaCategoria()">Por Categoria</button>
+                        <button class="btn btn-secondary" onclick="Catalogo.buscarPecaMarca()">Por Marca</button>
                     </div>
                 </div>
 
                 <div class="card full-width">
                     <div class="card-header-actions">
                         <h3>🔩 Peças Cadastradas</h3>
-                        <button class="btn btn-ghost btn-sm" onclick="CatalogoModule.listarPecas()">🔄 Atualizar</button>
+                        <button class="btn btn-ghost btn-sm" onclick="Catalogo.listarPecas()">🔄 Atualizar</button>
                     </div>
                     <div id="pecas-results" class="results-area">
                         <p class="placeholder">Nenhum resultado ainda.</p>
@@ -111,7 +111,7 @@ const CatalogoModule = (() => {
                             <input type="text" id="servico-desc" placeholder="Descrição do serviço (opcional)">
                         </div>
                     </div>
-                    <button class="btn btn-primary" onclick="CatalogoModule.criarServico()">Cadastrar Serviço</button>
+                    <button class="btn btn-primary" onclick="Catalogo.criarServico()">Cadastrar Serviço</button>
                 </div>
 
                 <div class="card">
@@ -127,17 +127,17 @@ const CatalogoModule = (() => {
                         </div>
                     </div>
                     <div class="btn-row">
-                        <button class="btn btn-secondary" onclick="CatalogoModule.buscarServicoPorId()">Por ID</button>
-                        <button class="btn btn-secondary" onclick="CatalogoModule.listarServicos()">Listar Todos</button>
-                        <button class="btn btn-secondary" onclick="CatalogoModule.listarServicosAtivos()">Ativos</button>
-                        <button class="btn btn-secondary" onclick="CatalogoModule.buscarServicoCategoria()">Por Categoria</button>
+                        <button class="btn btn-secondary" onclick="Catalogo.buscarServicoPorId()">Por ID</button>
+                        <button class="btn btn-secondary" onclick="Catalogo.listarServicos()">Listar Todas</button>
+                        <button class="btn btn-secondary" onclick="Catalogo.listarServicosAtivos()">Ativos</button>
+                        <button class="btn btn-secondary" onclick="Catalogo.buscarServicoCategoria()">Por Categoria</button>
                     </div>
                 </div>
 
                 <div class="card full-width">
                     <div class="card-header-actions">
                         <h3>🛠️ Serviços Cadastrados</h3>
-                        <button class="btn btn-ghost btn-sm" onclick="CatalogoModule.listarServicos()">🔄 Atualizar</button>
+                        <button class="btn btn-ghost btn-sm" onclick="Catalogo.listarServicos()">🔄 Atualizar</button>
                     </div>
                     <div id="servicos-results" class="results-area">
                         <p class="placeholder">Nenhum resultado ainda.</p>
@@ -148,20 +148,24 @@ const CatalogoModule = (() => {
     `;
 
     const switchTab = (tab) => {
-        document.querySelectorAll('#panel-catalogo .sub-tab').forEach(t => t.classList.remove('active'));
-        document.querySelector(`#panel-catalogo .sub-tab[data-subtab="${tab}"]`)?.classList.add('active');
-        document.querySelectorAll('#panel-catalogo .sub-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('#contentArea .sub-tab').forEach(t => t.classList.remove('active'));
+        document.querySelector(`#contentArea .sub-tab[data-subtab="${tab}"]`)?.classList.add('active');
+        document.querySelectorAll('#contentArea .sub-panel').forEach(p => p.classList.remove('active'));
         document.getElementById(`subtab-${tab}`)?.classList.add('active');
     };
 
     const val = (id) => document.getElementById(id)?.value?.trim() || '';
 
     // ── Renderizadores Peças ──
-    const renderPeca = (p) => `
+    const renderPeca = async (p) => {
+        const shortId = API.formatId(p.id);
+        const ativo = p.ativo !== false;
+
+        return `
         <div class="result-card">
             <div class="result-header">
-                <span class="result-id" onclick="navigator.clipboard.writeText('${p.id}');API.toast('ID copiado!','success')" title="Copiar ID">${p.id}</span>
-                <span class="badge badge-${p.ativo !== false ? 'ATIVA' : 'INATIVA'}">${p.ativo !== false ? 'Ativa' : 'Inativa'}</span>
+                <span class="result-id" onclick="navigator.clipboard.writeText('${p.id}');API.toast('ID copiado!','success')" title="Copiar ID Completto: ${p.id}">${shortId}</span>
+                <span class="badge badge-${ativo ? 'ATIVA' : 'INATIVA'}">${ativo ? 'Ativa' : 'Inativa'}</span>
             </div>
             <div class="result-grid">
                 <span class="result-label">Nome</span>
@@ -176,19 +180,24 @@ const CatalogoModule = (() => {
                 <span class="result-value">${p.descricao || '—'}</span>
             </div>
             <div class="result-actions">
-                <button class="btn btn-ghost btn-sm" onclick="CatalogoModule.incrementarEstoque('${p.id}')">📈 +Estoque</button>
-                <button class="btn btn-ghost btn-sm" onclick="CatalogoModule.decrementarEstoque('${p.id}')">📉 -Estoque</button>
-                <button class="btn btn-warning btn-sm" onclick="CatalogoModule.desativarPeca('${p.id}')">⏸ Desativar</button>
-                <button class="btn btn-danger btn-sm" onclick="CatalogoModule.deletarPeca('${p.id}')">🗑 Excluir</button>
+                <button class="btn btn-ghost btn-sm" onclick="Catalogo.incrementarEstoque('${p.id}')">📈 +Estoque</button>
+                <button class="btn btn-ghost btn-sm" onclick="Catalogo.decrementarEstoque('${p.id}')">📉 -Estoque</button>
+                <button class="btn btn-warning btn-sm" onclick="Catalogo.desativarPeca('${p.id}')">⏸ Desativar</button>
+                <button class="btn btn-danger btn-sm" onclick="Catalogo.deletarPeca('${p.id}')">🗑 Excluir</button>
             </div>
         </div>
-    `;
+        `;
+    };
 
-    const renderServico = (s) => `
+    const renderServico = async (s) => {
+        const shortId = API.formatId(s.id);
+        const ativo = s.ativo !== false;
+
+        return `
         <div class="result-card">
             <div class="result-header">
-                <span class="result-id" onclick="navigator.clipboard.writeText('${s.id}');API.toast('ID copiado!','success')" title="Copiar ID">${s.id}</span>
-                <span class="badge badge-${s.ativo !== false ? 'ATIVA' : 'INATIVA'}">${s.ativo !== false ? 'Ativo' : 'Inativo'}</span>
+                <span class="result-id" onclick="navigator.clipboard.writeText('${s.id}');API.toast('ID copiado!','success')" title="Copiar ID Completto: ${s.id}">${shortId}</span>
+                <span class="badge badge-${ativo ? 'ATIVA' : 'INATIVA'}">${ativo ? 'Ativo' : 'Inativo'}</span>
             </div>
             <div class="result-grid">
                 <span class="result-label">Nome</span>
@@ -201,20 +210,18 @@ const CatalogoModule = (() => {
                 <span class="result-value">${s.descricao || '—'}</span>
             </div>
             <div class="result-actions">
-                <button class="btn btn-warning btn-sm" onclick="CatalogoModule.desativarServico('${s.id}')">⏸ Desativar</button>
-                <button class="btn btn-danger btn-sm" onclick="CatalogoModule.deletarServico('${s.id}')">🗑 Excluir</button>
+                <button class="btn btn-warning btn-sm" onclick="Catalogo.desativarServico('${s.id}')">⏸ Desativar</button>
+                <button class="btn btn-danger btn-sm" onclick="Catalogo.deletarServico('${s.id}')">🗑 Excluir</button>
             </div>
         </div>
-    `;
-
-    const renderListPecas = (list) => {
-        const items = Array.isArray(list) ? list : (list?.content || []);
-        return items.length > 0 ? items.map(renderPeca).join('') : '<p class="placeholder">Nenhuma peça encontrada.</p>';
+        `;
     };
 
-    const renderListServicos = (list) => {
+    const renderList = async (list, renderFn) => {
         const items = Array.isArray(list) ? list : (list?.content || []);
-        return items.length > 0 ? items.map(renderServico).join('') : '<p class="placeholder">Nenhum serviço encontrado.</p>';
+        if (items.length === 0) return '<p class="placeholder">Nenhum resultado encontrado.</p>';
+        const promises = items.map(renderFn);
+        return (await Promise.all(promises)).join('');
     };
 
     // ── Ações de Peças ──
@@ -247,19 +254,25 @@ const CatalogoModule = (() => {
         if (!id) return API.toast('Informe o ID', 'error');
         const urls = API.getUrls();
         const r = await API.http('GET', `${urls.catalog}/api/v1/pecas/${id}`);
-        document.getElementById('pecas-results').innerHTML = r.ok ? renderPeca(r.data) : '<p class="placeholder">Não encontrada.</p>';
+        document.getElementById('pecas-results').innerHTML = r.ok ? await renderPeca(r.data) : '<p class="placeholder">Não encontrada.</p>';
     };
 
     const listarPecas = async () => {
+        const resEl = document.getElementById('pecas-results');
+        if (resEl) resEl.innerHTML = '<div class="loading-spinner">⏳ Carregando...</div>';
+
         const urls = API.getUrls();
         const r = await API.http('GET', `${urls.catalog}/api/v1/pecas`);
-        document.getElementById('pecas-results').innerHTML = renderListPecas(r.data);
+        if (resEl) resEl.innerHTML = await renderList(r.data, renderPeca);
     };
 
     const listarPecasAtivas = async () => {
+        const resEl = document.getElementById('pecas-results');
+        if (resEl) resEl.innerHTML = '<div class="loading-spinner">⏳ Carregando...</div>';
+
         const urls = API.getUrls();
         const r = await API.http('GET', `${urls.catalog}/api/v1/pecas/ativas`);
-        document.getElementById('pecas-results').innerHTML = renderListPecas(r.data);
+        if (resEl) resEl.innerHTML = await renderList(r.data, renderPeca);
     };
 
     const buscarPecaCategoria = async () => {
@@ -267,7 +280,7 @@ const CatalogoModule = (() => {
         if (!cat) return API.toast('Informe a categoria', 'error');
         const urls = API.getUrls();
         const r = await API.http('GET', `${urls.catalog}/api/v1/pecas/categoria/${encodeURIComponent(cat)}`);
-        document.getElementById('pecas-results').innerHTML = renderListPecas(r.data);
+        document.getElementById('pecas-results').innerHTML = await renderList(r.data, renderPeca);
     };
 
     const buscarPecaMarca = async () => {
@@ -275,7 +288,7 @@ const CatalogoModule = (() => {
         if (!marca) return API.toast('Informe a marca', 'error');
         const urls = API.getUrls();
         const r = await API.http('GET', `${urls.catalog}/api/v1/pecas/marca/${encodeURIComponent(marca)}`);
-        document.getElementById('pecas-results').innerHTML = renderListPecas(r.data);
+        document.getElementById('pecas-results').innerHTML = await renderList(r.data, renderPeca);
     };
 
     const incrementarEstoque = async (id) => {
@@ -347,19 +360,25 @@ const CatalogoModule = (() => {
         if (!id) return API.toast('Informe o ID', 'error');
         const urls = API.getUrls();
         const r = await API.http('GET', `${urls.catalog}/api/v1/servicos/${id}`);
-        document.getElementById('servicos-results').innerHTML = r.ok ? renderServico(r.data) : '<p class="placeholder">Não encontrado.</p>';
+        document.getElementById('servicos-results').innerHTML = r.ok ? await renderServico(r.data) : '<p class="placeholder">Não encontrado.</p>';
     };
 
     const listarServicos = async () => {
+        const resEl = document.getElementById('servicos-results');
+        if (resEl) resEl.innerHTML = '<div class="loading-spinner">⏳ Carregando...</div>';
+
         const urls = API.getUrls();
         const r = await API.http('GET', `${urls.catalog}/api/v1/servicos`);
-        document.getElementById('servicos-results').innerHTML = renderListServicos(r.data);
+        if (resEl) resEl.innerHTML = await renderList(r.data, renderServico);
     };
 
     const listarServicosAtivos = async () => {
+        const resEl = document.getElementById('servicos-results');
+        if (resEl) resEl.innerHTML = '<div class="loading-spinner">⏳ Carregando...</div>';
+
         const urls = API.getUrls();
         const r = await API.http('GET', `${urls.catalog}/api/v1/servicos/ativos`);
-        document.getElementById('servicos-results').innerHTML = renderListServicos(r.data);
+        if (resEl) resEl.innerHTML = await renderList(r.data, renderServico);
     };
 
     const buscarServicoCategoria = async () => {
@@ -367,7 +386,7 @@ const CatalogoModule = (() => {
         if (!cat) return API.toast('Informe a categoria', 'error');
         const urls = API.getUrls();
         const r = await API.http('GET', `${urls.catalog}/api/v1/servicos/categoria/${encodeURIComponent(cat)}`);
-        document.getElementById('servicos-results').innerHTML = renderListServicos(r.data);
+        document.getElementById('servicos-results').innerHTML = await renderList(r.data, renderServico);
     };
 
     const desativarServico = async (id) => {

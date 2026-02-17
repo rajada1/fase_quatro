@@ -1,33 +1,33 @@
 /**
  * ═══════════════════════════════════════════════════════
  *  Oficina Digital — API Client Module
- *  Gerencia configuração de URLs, HTTP requests e logging
+ *  Gerencia configuração de URLs, HTTP requests, logging
+ *  e Helpers para resolução de IDs (Cache)
  * ═══════════════════════════════════════════════════════
  */
 const API = (() => {
-    // Modo Gateway: todas as requisições passam pelo gateway na porta 8080 (com CORS)
-    // Modo Direto: cada serviço é acessado na sua porta individual (pode ter CORS bloqueado)
     const GATEWAY_URL = 'http://localhost:8080';
 
     const DEFAULT_URLS = {
-        os:        GATEWAY_URL,
-        billing:   GATEWAY_URL,
+        os: GATEWAY_URL,
+        billing: GATEWAY_URL,
         execution: GATEWAY_URL,
-        customer:  GATEWAY_URL,
-        catalog:   GATEWAY_URL,
-        people:    GATEWAY_URL,
+        customer: GATEWAY_URL,
+        catalog: GATEWAY_URL,
+        people: GATEWAY_URL,
     };
 
-    // URLs diretas dos serviços (sem gateway) — pode ser usado em Settings
     const DIRECT_URLS = {
-        os:        'http://localhost:8081',
-        billing:   'http://localhost:8082',
+        os: 'http://localhost:8081',
+        billing: 'http://localhost:8082',
         execution: 'http://localhost:8083',
-        customer:  'http://localhost:8084',
-        catalog:   'http://localhost:8085',
-        people:    'http://localhost:8086',
+        customer: 'http://localhost:8084',
+        catalog: 'http://localhost:8085',
+        people: 'http://localhost:8086',
     };
 
+    // Cache simples em memória para evitar requests repetidos de nomes
+    const cache = new Map();
     let consoleCount = 0;
 
     // ── Configuração ──
@@ -50,6 +50,11 @@ const API = (() => {
 
     // ── Utilitários ──
     const uuid = () => crypto.randomUUID();
+
+    const formatId = (id) => {
+        if (!id) return '—';
+        return id.substring(0, 8);
+    };
 
     const formatDate = (d) => d ? new Date(d).toLocaleString('pt-BR') : '—';
 
@@ -86,7 +91,7 @@ const API = (() => {
         const opts = { method, headers };
         if (body && method !== 'GET') opts.body = JSON.stringify(body);
 
-        let res, data, error;
+        let res, data = null, error = null;
         try {
             res = await fetch(url, opts);
             const text = await res.text();
@@ -100,16 +105,55 @@ const API = (() => {
 
         if (error) {
             toast(`Erro de conexão: ${error.message}`, 'error');
-            throw error;
+            throw error; // Re-throw para chamador tratar se quiser
         }
-        if (!res.ok) {
+
+        // Log de erro de API (exceto 404 que às vezes é esperado)
+        if (!res.ok && res.status !== 404) {
             const msg = typeof data === 'object'
                 ? (data.message || data.error || JSON.stringify(data))
                 : data;
             toast(`${res.status}: ${msg}`, 'error');
         }
+
         return { status: res.status, data, ok: res.ok };
     };
+
+    // ── Resolvers (Cache + Fetch) ──
+
+    const resolveName = async (service, endpoint, id, field = 'nome') => {
+        if (!id) return '—';
+        const cacheKey = `${service}:${endpoint}:${id}`;
+        if (cache.get(cacheKey)) return cache.get(cacheKey);
+
+        const urls = getUrls();
+        // Ex: http://localhost:8084/api/v1/clientes/123
+        const url = `${urls[service]}/api/v1/${endpoint}/${id}`;
+
+        try {
+            // Nota: usamos fetch direto para não gerar spam no console e toasts
+            const headers = {};
+            if (typeof AuthModule !== 'undefined' && AuthModule.isAuthenticated()) {
+                headers['Authorization'] = `Bearer ${AuthModule.getToken()}`;
+            }
+            const res = await fetch(url, { headers });
+            if (res.ok) {
+                const data = await res.json();
+                const result = data[field] || id; // Fallback pro ID
+                cache.set(cacheKey, result);
+                return result;
+            }
+        } catch (e) {
+            console.warn(`Falha ao resolver ${endpoint} ${id}`, e);
+        }
+        return formatId(id); // Retorna ID curto se falhar
+    };
+
+    const getClienteNome = (id) => resolveName('customer', 'clientes', id, 'nome');
+    const getVeiculoPlaca = (id) => resolveName('customer', 'veiculos', id, 'placa');
+    const getPessoaNome = (id) => resolveName('people', 'pessoas', id, 'nome');
+    const getServicoDesc = (id) => resolveName('catalog', 'servicos', id, 'descricao');
+    const getPecaNome = (id) => resolveName('catalog', 'pecas', id, 'nome');
 
     // ── Console HTTP Logging ──
     const logConsole = (method, url, status, ms, error, reqBody, resData) => {
@@ -150,18 +194,11 @@ const API = (() => {
     };
 
     return {
-        DEFAULT_URLS,
-        DIRECT_URLS,
-        GATEWAY_URL,
-        getUrls,
-        setUrls,
-        resetUrls,
-        uuid,
-        formatDate,
-        formatMoney,
-        toast,
-        http,
-        clearConsole,
-        toggleConsole,
+        DEFAULT_URLS, DIRECT_URLS, GATEWAY_URL,
+        getUrls, setUrls, resetUrls,
+        uuid, formatId, formatDate, formatMoney,
+        toast, http,
+        getClienteNome, getVeiculoPlaca, getPessoaNome, getServicoDesc, getPecaNome,
+        clearConsole, toggleConsole,
     };
 })();

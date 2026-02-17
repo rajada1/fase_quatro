@@ -4,9 +4,10 @@
  *  CRUD completo para /api/v1/pessoas (People Service :8086)
  * ═══════════════════════════════════════════════════════
  */
-const PessoasModule = (() => {
+const Pessoas = (() => {
     const TIPOS_PESSOA = ['PESSOA_FISICA', 'PESSOA_JURIDICA'];
     const PERFIS = ['CLIENTE', 'MECANICO', 'ADMIN'];
+    let _pessoasCache = [];
 
     const render = () => {
         return `
@@ -48,34 +49,17 @@ const PessoasModule = (() => {
                         </select>
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="PessoasModule.criar()">Cadastrar Pessoa</button>
-            </div>
-
-            <!-- Buscar / Listar -->
-            <div class="card">
-                <h3>🔍 Buscar / Listar</h3>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Buscar por ID</label>
-                        <input type="text" id="pessoa-searchId" placeholder="UUID da pessoa">
-                    </div>
-                    <div class="form-group">
-                        <label>Buscar por Documento</label>
-                        <input type="text" id="pessoa-searchDoc" placeholder="CPF/CNPJ">
-                    </div>
-                </div>
-                <div class="btn-row">
-                    <button class="btn btn-secondary" onclick="PessoasModule.buscarPorId()">Buscar por ID</button>
-                    <button class="btn btn-secondary" onclick="PessoasModule.buscarPorDoc()">Buscar por Doc</button>
-                    <button class="btn btn-secondary" onclick="PessoasModule.listarTodas()">Listar Todas</button>
-                </div>
+                <button class="btn btn-primary" onclick="Pessoas.criar()">Cadastrar Pessoa</button>
             </div>
 
             <!-- Tabela de Resultados -->
             <div class="card full-width">
                 <div class="card-header-actions">
                     <h3>📋 Pessoas Cadastradas</h3>
-                    <button class="btn btn-ghost btn-sm" onclick="PessoasModule.listarTodas()">🔄 Atualizar</button>
+                    <div class="search-box">
+                        <input type="text" id="pessoa-filter-input" placeholder="Filtrar por Nome, Doc ou Email..." onkeyup="Pessoas.filtrarPessoas(this.value)">
+                    </div>
+                    <button class="btn btn-ghost btn-sm" onclick="Pessoas.listarTodas()">🔄 Atualizar</button>
                 </div>
                 <div id="pessoas-results" class="results-area">
                     <p class="placeholder">Nenhum resultado ainda. Use os controles acima.</p>
@@ -85,10 +69,12 @@ const PessoasModule = (() => {
         `;
     };
 
-    const renderPessoa = (p) => `
+    const renderPessoa = (p) => {
+        const shortId = API.formatId(p.id);
+        return `
         <div class="result-card">
             <div class="result-header">
-                <span class="result-id" onclick="navigator.clipboard.writeText('${p.id}');API.toast('ID copiado!','success')" title="Clique para copiar">${p.id}</span>
+                <span class="result-id" onclick="navigator.clipboard.writeText('${p.id}');API.toast('ID copiado!','success')" title="Clique para copiar ID Compelto: ${p.id}">${shortId}</span>
                 <span class="badge badge-${p.perfil}">${p.perfil || '—'}</span>
             </div>
             <div class="result-grid">
@@ -106,12 +92,13 @@ const PessoasModule = (() => {
                 <span class="result-value">${API.formatDate(p.createdAt)}</span>
             </div>
             <div class="result-actions">
-                <button class="btn btn-ghost btn-sm" onclick="PessoasModule.preencherEdicao('${p.id}')">✏️ Editar</button>
-                <button class="btn btn-danger btn-sm" onclick="PessoasModule.deletar('${p.id}')">🗑 Excluir</button>
-                <button class="btn btn-secondary btn-sm" onclick="ClientesModule.criarClienteComPessoa('${p.id}')">👤 Criar Cliente</button>
+                <button class="btn btn-ghost btn-sm" onclick="Pessoas.preencherEdicao('${p.id}')">✏️ Editar</button>
+                <button class="btn btn-danger btn-sm" onclick="Pessoas.deletar('${p.id}')">🗑 Excluir</button>
+                <button class="btn btn-secondary btn-sm" onclick="Clientes.criarClienteComPessoa('${p.id}')">👤 Criar Cliente</button>
             </div>
         </div>
-    `;
+        `;
+    };
 
     const renderList = (list) => {
         const items = Array.isArray(list) ? list : (list?.content || []);
@@ -148,25 +135,43 @@ const PessoasModule = (() => {
     };
 
     const buscarPorId = async () => {
-        const id = val('pessoa-searchId');
-        if (!id) return API.toast('Informe o ID da pessoa', 'error');
-        const urls = API.getUrls();
-        const r = await API.http('GET', `${urls.people}/api/v1/pessoas/${id}`);
-        document.getElementById('pessoas-results').innerHTML = r.ok ? renderPessoa(r.data) : renderList([]);
-    };
-
-    const buscarPorDoc = async () => {
-        const doc = val('pessoa-searchDoc');
-        if (!doc) return API.toast('Informe o documento', 'error');
-        const urls = API.getUrls();
-        const r = await API.http('GET', `${urls.people}/api/v1/pessoas/documento/${doc}`);
-        document.getElementById('pessoas-results').innerHTML = r.ok ? renderPessoa(r.data) : renderList([]);
+        // Redirect to filter
+        const term = val('pessoa-filter-input');
+        if (term) filtrarPessoas(term);
     };
 
     const listarTodas = async () => {
+        const resEl = document.getElementById('pessoas-results');
+        if (resEl) resEl.innerHTML = '<div class="loading-spinner">⏳ Carregando...</div>';
+
         const urls = API.getUrls();
-        const r = await API.http('GET', `${urls.people}/api/v1/pessoas`);
-        document.getElementById('pessoas-results').innerHTML = renderList(r.data);
+        try {
+            const r = await API.http('GET', `${urls.people}/api/v1/pessoas`);
+            if (r.ok) {
+                const lista = Array.isArray(r.data) ? r.data : (r.data.content || []);
+                _pessoasCache = lista;
+                if (resEl) resEl.innerHTML = renderList(lista);
+
+                const term = val('pessoa-filter-input');
+                if (term) filtrarPessoas(term);
+            } else {
+                if (resEl) resEl.innerHTML = `<div class="result-card"><p style="color:var(--error)">❌ Erro ao listar: ${r.status}</p></div>`;
+            }
+        } catch (e) {
+            if (resEl) resEl.innerHTML = '<p class="placeholder">Erro de conexão.</p>';
+        }
+    };
+
+    const filtrarPessoas = (term) => {
+        if (!_pessoasCache) return;
+        const lower = term.toLowerCase();
+        const filtered = _pessoasCache.filter(p =>
+            (p.name || '').toLowerCase().includes(lower) ||
+            (p.email || '').toLowerCase().includes(lower) ||
+            (p.numeroDocumento || '').includes(term) ||
+            (p.id || '').includes(term)
+        );
+        document.getElementById('pessoas-results').innerHTML = renderList(filtered);
     };
 
     const preencherEdicao = async (id) => {
@@ -180,12 +185,17 @@ const PessoasModule = (() => {
         document.getElementById('pessoa-telefone').value = p.phone || '';
         document.getElementById('pessoa-tipo').value = p.tipoPessoa || 'PESSOA_FISICA';
         document.getElementById('pessoa-perfil').value = p.perfil || 'CLIENTE';
-        // Trocar botão de criar para atualizar
-        const btnContainer = document.querySelector('#panel-pessoas .card .btn-primary');
-        if (btnContainer) {
-            btnContainer.textContent = '💾 Atualizar Pessoa';
-            btnContainer.onclick = () => atualizar(id);
+
+        const btnContainer = document.querySelector('#contentArea .btn-primary'); // Updated selector
+        if (!btnContainer) {
+            // Fallback if structure is different
+            console.warn('Button container not found for update toggle');
+            return;
         }
+
+        btnContainer.textContent = '💾 Atualizar Pessoa';
+        btnContainer.onclick = () => atualizar(id);
+
         API.toast('Dados carregados para edição.', 'info');
     };
 
@@ -203,11 +213,11 @@ const PessoasModule = (() => {
         if (r.ok) {
             API.toast('Pessoa atualizada com sucesso!', 'success');
             listarTodas();
-            // Restaurar botão de criar
-            const btnContainer = document.querySelector('#panel-pessoas .card .btn-primary');
+
+            const btnContainer = document.querySelector('#contentArea .btn-primary');
             if (btnContainer) {
                 btnContainer.textContent = 'Cadastrar Pessoa';
-                btnContainer.onclick = criar;
+                btnContainer.onclick = () => Pessoas.criar();
             }
         }
     };
@@ -222,5 +232,5 @@ const PessoasModule = (() => {
         }
     };
 
-    return { render, criar, buscarPorId, buscarPorDoc, listarTodas, preencherEdicao, atualizar, deletar };
+    return { render, criar, buscarPorId, listarTodas, preencherEdicao, atualizar, deletar, filtrarPessoas };
 })();

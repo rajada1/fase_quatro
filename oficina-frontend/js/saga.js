@@ -4,7 +4,7 @@
  *  Fluxo completo Cross-Service para testar o padrão SAGA
  * ═══════════════════════════════════════════════════════
  */
-const SagaModule = (() => {
+const Saga = (() => {
     let _state = {};
 
     const render = () => `
@@ -62,8 +62,8 @@ const SagaModule = (() => {
                 </div>
             </div>
             <div class="saga-controls">
-                <button class="btn btn-primary btn-large" onclick="SagaModule.executarFluxoCompleto()">🚀 Executar Fluxo Completo</button>
-                <button class="btn btn-ghost" onclick="SagaModule.resetar()">🔄 Resetar</button>
+                <button class="btn btn-primary btn-large" onclick="Saga.executarFluxoCompleto()">🚀 Executar Fluxo Completo</button>
+                <button class="btn btn-ghost" onclick="Saga.resetar()">🔄 Resetar</button>
             </div>
 
             <!-- Saga Context -->
@@ -113,7 +113,7 @@ const SagaModule = (() => {
         ids.innerHTML = Object.entries(_state).map(([k, v]) =>
             `<div class="saga-id-item">
                 <span class="saga-id-label">${k}:</span>
-                <span class="saga-id-value" onclick="navigator.clipboard.writeText('${v}');API.toast('Copiado!','success')" title="Clique para copiar">${v}</span>
+                <span class="saga-id-value" onclick="navigator.clipboard.writeText('${v}');API.toast('Copiado!','success')" title="Clique para copiar ID Completo: ${v}">${API.formatId(v)}</span>
             </div>`
         ).join('');
     };
@@ -145,7 +145,7 @@ const SagaModule = (() => {
             const osRes = await API.http('POST', `${urls.os}/api/v1/ordens-servico`, osBody);
             if (!osRes.ok) throw new Error('Falha ao criar OS');
             _state.osId = osRes.data.id;
-            _logEntry(`✅ OS criada: ${osRes.data.id}`, 'success');
+            _logEntry(`✅ OS criada: ${API.formatId(osRes.data.id)}`, 'success');
             _updateContext();
             _setStep(1, 'done');
             await sleep(800);
@@ -165,7 +165,7 @@ const SagaModule = (() => {
             const orcRes = await API.http('POST', `${urls.billing}/api/v1/orcamentos`, orcBody);
             if (!orcRes.ok) throw new Error('Falha ao criar orçamento');
             _state.orcamentoId = orcRes.data.id;
-            _logEntry(`✅ Orçamento criado: ${orcRes.data.id} — Total: ${API.formatMoney(orcRes.data.valorTotal)}`, 'success');
+            _logEntry(`✅ Orçamento criado: ${API.formatId(orcRes.data.id)} — Total: ${API.formatMoney(orcRes.data.valorTotal)}`, 'success');
             _updateContext();
             _setStep(2, 'done');
             await sleep(800);
@@ -193,7 +193,7 @@ const SagaModule = (() => {
             const pagRes = await API.http('POST', `${urls.billing}/api/v1/pagamentos`, pagBody);
             if (!pagRes.ok) throw new Error('Falha ao registrar pagamento');
             _state.pagamentoId = pagRes.data.id;
-            _logEntry(`✅ Pagamento registrado: ${pagRes.data.id}`, 'success');
+            _logEntry(`✅ Pagamento registrado: ${API.formatId(pagRes.data.id)}`, 'success');
             _updateContext();
 
             _logEntry('💳 Confirmando pagamento...', 'info');
@@ -214,7 +214,7 @@ const SagaModule = (() => {
             const execRes = await API.http('POST', `${urls.execution}/api/v1/execucoes-os`, execBody);
             if (!execRes.ok) throw new Error('Falha ao criar execução');
             _state.execucaoId = execRes.data.id;
-            _logEntry(`✅ Execução criada: ${execRes.data.id}`, 'success');
+            _logEntry(`✅ Execução criada: ${API.formatId(execRes.data.id)}`, 'success');
             _updateContext();
 
             _logEntry('▶️ Iniciando execução...', 'info');
@@ -253,10 +253,10 @@ const SagaModule = (() => {
             _logEntry('', 'info');
             _logEntry('═══════════════════════════════════════════', 'success');
             _logEntry('  🎉 SAGA FLOW COMPLETO COM SUCESSO!', 'success');
-            _logEntry(`  OS: ${_state.osId}`, 'success');
-            _logEntry(`  Orçamento: ${_state.orcamentoId}`, 'success');
-            _logEntry(`  Pagamento: ${_state.pagamentoId}`, 'success');
-            _logEntry(`  Execução: ${_state.execucaoId}`, 'success');
+            _logEntry(`  OS: ${API.formatId(_state.osId)}`, 'success');
+            _logEntry(`  Orçamento: ${API.formatId(_state.orcamentoId)}`, 'success');
+            _logEntry(`  Pagamento: ${API.formatId(_state.pagamentoId)}`, 'success');
+            _logEntry(`  Execução: ${API.formatId(_state.execucaoId)}`, 'success');
             _logEntry('═══════════════════════════════════════════', 'success');
 
             API.toast('🎉 Fluxo SAGA completo com sucesso!', 'success');

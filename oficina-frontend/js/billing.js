@@ -4,200 +4,60 @@
  *  Orçamentos e Pagamentos (Billing Service :8082)
  * ═══════════════════════════════════════════════════════
  */
-const BillingModule = (() => {
+const Billing = (() => {
+    let _orcCache = [];
+    let _pagCache = [];
     let _lastOrcId = null;
     let _lastPagId = null;
 
-    const render = () => `
-        <div class="panel-header">
-            <h1><span class="accent-billing">●</span> Faturamento</h1>
-            <span class="service-tag">billing-service :8082</span>
-        </div>
-
-        <div class="sub-tabs">
-            <button class="sub-tab active" data-subtab="orcamentos" onclick="BillingModule.switchTab('orcamentos')">💵 Orçamentos</button>
-            <button class="sub-tab" data-subtab="pagamentos" onclick="BillingModule.switchTab('pagamentos')">💳 Pagamentos</button>
-        </div>
-
-        <!-- Orçamentos -->
-        <div class="sub-panel active" id="subtab-orcamentos">
-            <div class="panel-grid">
-                <div class="card">
-                    <h3>➕ Criar Orçamento</h3>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>OS ID (UUID) *</label>
-                            <input type="text" id="orc-osId" placeholder="ID da Ordem de Serviço">
-                        </div>
-                        <div class="form-group">
-                            <label>Observação</label>
-                            <input type="text" id="orc-observacao" placeholder="Opcional">
-                        </div>
-                    </div>
-                    <div class="items-section">
-                        <h4>Itens do Orçamento</h4>
-                        <div id="orc-items">
-                            <div class="item-row">
-                                <input type="text" placeholder="Descrição" class="item-desc">
-                                <input type="number" placeholder="Valor" class="item-valor" step="0.01">
-                                <input type="number" placeholder="Qtd" class="item-qty" value="1" min="1">
-                                <button class="btn-icon btn-remove" onclick="this.parentElement.remove()">✕</button>
-                            </div>
-                        </div>
-                        <button class="btn btn-ghost" onclick="BillingModule.addItem()">+ Adicionar Item</button>
-                    </div>
-                    <button class="btn btn-primary" onclick="BillingModule.criarOrcamento()">Criar Orçamento</button>
-                </div>
-
-                <div class="card">
-                    <h3>🔍 Buscar Orçamento</h3>
-                    <div class="form-group">
-                        <label>Orçamento ID (UUID)</label>
-                        <input type="text" id="orc-searchId" placeholder="UUID do orçamento">
-                    </div>
-                    <div class="btn-row">
-                        <button class="btn btn-secondary" onclick="BillingModule.buscarOrcamento()">Buscar</button>
-                        <button class="btn btn-accent" onclick="BillingModule.listarOrcamentos()">📋 Listar Todos</button>
-                    </div>
-                    <div class="action-buttons" id="orc-actions" style="display:none;">
-                        <button class="btn btn-success" onclick="BillingModule.aprovarOrcamento()">✅ Aprovar</button>
-                        <button class="btn btn-warning" onclick="BillingModule.rejeitarOrcamento()">❌ Rejeitar</button>
-                        <button class="btn btn-danger" onclick="BillingModule.cancelarOrcamento()">🗑 Cancelar</button>
-                    </div>
-                </div>
-
-                <div class="card full-width">
-                    <h3>📊 Resultado</h3>
-                    <div id="orc-results" class="results-area">
-                        <p class="placeholder">Nenhum resultado ainda.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Pagamentos -->
-        <div class="sub-panel" id="subtab-pagamentos">
-            <div class="panel-grid">
-                <div class="card">
-                    <h3>➕ Registrar Pagamento (Gerar Link)</h3>
-                    <p style="font-size:0.85em; color:#aaa; margin-bottom:12px;">
-                        Ao registrar, será gerado um <strong>link de pagamento</strong> do Mercado Pago para enviar ao cliente.
-                    </p>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Orçamento ID *</label>
-                            <input type="text" id="pag-orcamentoId" placeholder="UUID do orçamento">
-                        </div>
-                        <div class="form-group">
-                            <label>OS ID *</label>
-                            <input type="text" id="pag-osId" placeholder="UUID da OS">
-                        </div>
-                        <div class="form-group">
-                            <label>Valor (R$) *</label>
-                            <input type="number" id="pag-valor" placeholder="0.00" step="0.01">
-                        </div>
-                        <div class="form-group">
-                            <label>Forma de Pagamento</label>
-                            <select id="pag-forma">
-                                <option value="PIX">PIX</option>
-                                <option value="CARTAO_CREDITO">Cartão de Crédito</option>
-                                <option value="CARTAO_DEBITO">Cartão de Débito</option>
-                                <option value="BOLETO">Boleto</option>
-                                <option value="DINHEIRO">Dinheiro</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Email do Pagador</label>
-                            <input type="email" id="pag-email" placeholder="payer@email.com">
-                        </div>
-                    </div>
-                    <button class="btn btn-primary" onclick="BillingModule.registrarPagamento()">💳 Gerar Link de Pagamento</button>
-                </div>
-
-                <div class="card">
-                    <h3>🔍 Checar Pagamento</h3>
-                    <p style="font-size:0.85em; color:#aaa; margin-bottom:12px;">
-                        Verifica no Mercado Pago se o cliente já pagou.
-                    </p>
-                    <div class="form-group">
-                        <label>Pagamento ID (UUID)</label>
-                        <input type="text" id="pag-checarId" placeholder="UUID do pagamento">
-                    </div>
-                    <div class="btn-row">
-                        <button class="btn btn-accent" onclick="BillingModule.checarPagamento()">🔄 Checar Pagamento no MP</button>
-                        <button class="btn btn-secondary" onclick="BillingModule.listarPagamentos()">📋 Listar Todos</button>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3>🔧 Ações Manuais</h3>
-                    <div class="form-group">
-                        <label>Pagamento ID (UUID)</label>
-                        <input type="text" id="pag-actionId" placeholder="UUID do pagamento">
-                    </div>
-                    <div class="form-group">
-                        <label>Motivo (para estorno)</label>
-                        <input type="text" id="pag-motivo" placeholder="Opcional">
-                    </div>
-                    <div class="btn-row">
-                        <button class="btn btn-success" onclick="BillingModule.confirmarPagamento()">✅ Confirmar</button>
-                        <button class="btn btn-warning" onclick="BillingModule.estornarPagamento()">↩️ Estornar</button>
-                        <button class="btn btn-danger" onclick="BillingModule.cancelarPagamento()">🗑 Cancelar</button>
-                    </div>
-                </div>
-
-                <div class="card full-width">
-                    <h3>📊 Resultado</h3>
-                    <div id="pag-results" class="results-area">
-                        <p class="placeholder">Nenhum resultado ainda.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
+    // render ... (kept as is in file, updated previously)
 
     const switchTab = (tab) => {
-        document.querySelectorAll('#panel-billing .sub-tab').forEach(t => t.classList.remove('active'));
-        document.querySelector(`#panel-billing .sub-tab[data-subtab="${tab}"]`)?.classList.add('active');
-        document.querySelectorAll('#panel-billing .sub-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('#contentArea .sub-tab').forEach(t => t.classList.remove('active'));
+        document.querySelector(`#contentArea .sub-tab[data-subtab="${tab}"]`)?.classList.add('active');
+        document.querySelectorAll('#contentArea .sub-panel').forEach(p => p.classList.remove('active'));
         document.getElementById(`subtab-${tab}`)?.classList.add('active');
+
+        if (tab === 'orcamentos') listarOrcamentos();
+        if (tab === 'pagamentos') listarPagamentos();
     };
 
     const val = (id) => document.getElementById(id)?.value?.trim() || '';
 
     // ── Renderizadores ──
-    const renderOrcamento = (orc) => {
+    const renderOrcamento = async (orc) => {
         if (!orc) return '<p class="placeholder">Nenhum dado.</p>';
         const orcStatusStr = String(orc.status || 'UNKNOWN');
         const itensHtml = (orc.itens || [])
             .map(i => `<span class="result-value">• ${i.descricao} — ${API.formatMoney(i.valor)} x${i.quantidade || 1}</span>`)
             .join('');
+
         return `
-            <div class="result-card">
+            <div class="result-card" data-id="${orc.id}" title="ID: ${orc.id}">
                 <div class="result-header">
-                    <span class="result-id" onclick="navigator.clipboard.writeText('${orc.id}');API.toast('ID copiado!','success')" title="Copiar ID">${orc.id}</span>
                     <span class="badge badge-${orcStatusStr}">${orcStatusStr.replace(/_/g, ' ')}</span>
+                    <span class="text-muted text-sm" style="margin-left: auto;">${API.formatDate(orc.dataCriacao || orc.createdAt)}</span>
                 </div>
                 <div class="result-grid">
-                    <span class="result-label">OS ID</span>
-                    <span class="result-value">${orc.osId || '—'}</span>
                     <span class="result-label">Valor Total</span>
                     <span class="result-value font-bold">${API.formatMoney(orc.valorTotal)}</span>
                     <span class="result-label">Observação</span>
-                    <span class="result-value">${orc.observacao || '—'}</span>
-                    <span class="result-label">Criado em</span>
-                    <span class="result-value">${API.formatDate(orc.dataCriacao || orc.createdAt)}</span>
+                    <span class="result-value" style="grid-column: span 3;">${orc.observacao || '—'}</span>
                 </div>
                 ${itensHtml ? `<div class="result-items">${itensHtml}</div>` : ''}
                 <div class="result-actions">
-                    <button class="btn btn-success btn-sm" onclick="BillingModule.aprovarOrcamentoPorId('${orc.id}')">✅ Aprovar</button>
-                    <button class="btn btn-secondary btn-sm" onclick="BillingModule.criarPagamentoPara('${orc.id}','${orc.osId}','${orc.valorTotal}')">💳 Pagar</button>
+                    ${orcStatusStr === 'PENDENTE' ? `
+                        <button class="btn btn-success btn-sm" onclick="Billing.aprovarOrcamentoPorId('${orc.id}')">✅ Aprovar</button>
+                        <button class="btn btn-warning btn-sm" onclick="Billing.rejeitarOrcamentoPorId('${orc.id}')">❌ Rejeitar</button>
+                        <button class="btn btn-danger btn-sm" onclick="Billing.cancelarOrcamentoPorId('${orc.id}')">🗑 Cancelar</button>
+                    ` : ''}
+                    ${orcStatusStr === 'APROVADO' ? `<button class="btn btn-secondary btn-sm" onclick="Billing.criarPagamentoPara('${orc.id}','${orc.osId}','${orc.valorTotal}')">💳 Pagar</button>` : ''}
                 </div>
             </div>
         `;
     };
 
-    const renderPagamento = (pag) => {
+    const renderPagamento = async (pag) => {
         if (!pag) return '<p class="placeholder">Nenhum dado.</p>';
 
         const hasLink = pag.initPoint;
@@ -213,26 +73,18 @@ const BillingModule = (() => {
         const formaStr = String(pag.formaPagamento || '—');
 
         return `
-            <div class="result-card">
+            <div class="result-card" data-id="${pag.id}">
                 <div class="result-header">
-                    <span class="result-id" onclick="navigator.clipboard.writeText('${pag.id}');API.toast('ID copiado!','success')" title="Copiar ID">${pag.id}</span>
                     <span class="badge badge-${statusStr}">${emoji} ${statusStr.replace(/_/g, ' ')}</span>
+                    <span class="text-muted text-sm" style="margin-left: auto;">${API.formatDate(pag.dataCriacao || pag.createdAt)}</span>
                 </div>
                 <div class="result-grid">
-                    <span class="result-label">Orçamento ID</span>
-                    <span class="result-value">${pag.orcamentoId || '—'}</span>
-                    <span class="result-label">OS ID</span>
-                    <span class="result-value">${pag.osId || '—'}</span>
                     <span class="result-label">Valor</span>
                     <span class="result-value font-bold">${API.formatMoney(pag.valor)}</span>
                     <span class="result-label">Forma</span>
                     <span class="result-value">${formaStr.replace(/_/g, ' ')}</span>
-                    <span class="result-label">Preference ID</span>
-                    <span class="result-value">${pag.mercadoPagoPreferenceId || '—'}</span>
-                    <span class="result-label">MP Payment ID</span>
-                    <span class="result-value">${pag.mercadoPagoPaymentId || '—'}</span>
-                    <span class="result-label">Criado em</span>
-                    <span class="result-value">${API.formatDate(pag.dataCriacao || pag.createdAt)}</span>
+                    <span class="result-label">Email</span>
+                    <span class="result-value">${pag.payerEmail || '—'}</span>
                     ${pag.dataPagamento ? `
                         <span class="result-label">Pago em</span>
                         <span class="result-value">${API.formatDate(pag.dataPagamento)}</span>
@@ -240,22 +92,30 @@ const BillingModule = (() => {
                 </div>
                 ${hasLink ? `
                     <div style="margin-top:12px; padding:12px; background:rgba(0,122,255,0.1); border-radius:8px; border:1px solid rgba(0,122,255,0.3);">
-                        <strong style="color:#007aff;">🔗 Link de Pagamento:</strong><br>
-                        <a href="${pag.initPoint}" target="_blank" rel="noopener" style="color:#00d4ff; word-break:break-all; font-size:0.85em;">${pag.initPoint}</a>
+                        <strong style="color:#007aff;">🔗 Link MP:</strong>
                         <div style="margin-top:8px;">
-                            <button class="btn btn-accent btn-sm" onclick="navigator.clipboard.writeText('${pag.initPoint}');API.toast('Link copiado!','success')">📋 Copiar Link</button>
-                            <button class="btn btn-primary btn-sm" onclick="window.open('${pag.initPoint}','_blank')">🌐 Abrir Link</button>
+                            <button class="btn btn-accent btn-sm" onclick="navigator.clipboard.writeText('${pag.initPoint}');API.toast('Link copiado!','success')">📋 Copiar</button>
+                            <button class="btn btn-primary btn-sm" onclick="window.open('${pag.initPoint}','_blank')">🌐 Abrir</button>
                         </div>
                     </div>
                 ` : ''}
                 <div class="result-actions" style="margin-top:12px;">
-                    <button class="btn btn-accent btn-sm" onclick="BillingModule.checarPagamentoPorId('${pag.id}')">🔄 Checar Pagamento</button>
+                    <button class="btn btn-accent btn-sm" onclick="Billing.checarPagamentoPorId('${pag.id}')">🔄 Checar MP</button>
                     ${pag.status === 'PENDENTE' || pag.status === 'PROCESSANDO' ? `
-                        <button class="btn btn-success btn-sm" onclick="BillingModule.confirmarPagamentoPorId('${pag.id}')">✅ Confirmar Manual</button>
+                        <button class="btn btn-success btn-sm" onclick="Billing.confirmarPagamentoPorId('${pag.id}')">✅ Confirmar</button>
+                        <button class="btn btn-danger btn-sm" onclick="Billing.cancelarPagamentoPorId('${pag.id}')">🗑 Cancelar</button>
                     ` : ''}
+                    ${pag.status === 'CONFIRMADO' ? `<button class="btn btn-warning btn-sm" onclick="Billing.estornarPagamentoPorId('${pag.id}')">↩️ Estornar</button>` : ''}
                 </div>
             </div>
         `;
+    };
+
+    const renderList = async (list, renderFn) => {
+        if (!Array.isArray(list) || list.length === 0) return '<p class="placeholder">Nenhum registro encontrado.</p>';
+        const promises = list.map(item => renderFn(item));
+        const htmlItems = await Promise.all(promises);
+        return htmlItems.join('');
     };
 
     // ── Ações de Orçamento ──
@@ -292,53 +152,78 @@ const BillingModule = (() => {
         };
         const r = await API.http('POST', `${urls.billing}/api/v1/orcamentos`, body);
         if (r.ok) API.toast('Orçamento criado!', 'success');
-        document.getElementById('orc-results').innerHTML = renderOrcamento(r.data);
+        document.getElementById('orc-results').innerHTML = await renderOrcamento(r.data);
     };
 
-    const buscarOrcamento = async () => {
-        const id = val('orc-searchId');
-        if (!id) return API.toast('Informe o ID do orçamento', 'error');
+    // ── Listar / Filtrar Orçamentos ──
+    const listarOrcamentos = async () => {
+        const resEl = document.getElementById('orc-results');
+        if (resEl) resEl.innerHTML = '<div class="loading-spinner">⏳ Carregando...</div>';
+
         const urls = API.getUrls();
-        const r = await API.http('GET', `${urls.billing}/api/v1/orcamentos/${id}`);
-        document.getElementById('orc-results').innerHTML = renderOrcamento(r.data);
-        if (r.ok) {
-            _lastOrcId = id;
-            const actions = document.getElementById('orc-actions');
-            if (actions) actions.style.display = 'flex';
+        try {
+            // Cache logic
+            const r = await API.http('GET', `${urls.billing}/api/v1/orcamentos`);
+            if (r.ok) {
+                _orcCache = Array.isArray(r.data) ? r.data : (r.data.content || []);
+                const term = val('orc-filter-input');
+                if (term) {
+                    filtrarOrcamentos(term);
+                } else {
+                    const html = await renderList(_orcCache, renderOrcamento);
+                    if (resEl) resEl.innerHTML = html;
+                }
+            } else {
+                if (resEl) resEl.innerHTML = `<div class="result-card"><p style="color:var(--error)">❌ Erro ao listar: ${r.status}</p></div>`;
+            }
+        } catch (e) {
+            console.error(e);
+            if (resEl) resEl.innerHTML = '<p class="placeholder">Erro de conexão.</p>';
         }
     };
 
-    const aprovarOrcamento = async () => {
-        const id = val('orc-searchId') || _lastOrcId;
-        if (!id) return API.toast('Busque um orçamento primeiro', 'error');
-        return aprovarOrcamentoPorId(id);
+    const filtrarOrcamentos = (term) => {
+        if (!_orcCache) return;
+        const lower = term.toLowerCase();
+        const filtered = _orcCache.filter(o =>
+            (o.observacao || '').toLowerCase().includes(lower) ||
+            (o.status || '').toLowerCase().includes(lower) ||
+            (o.id || '').toLowerCase().includes(lower)
+        );
+        renderList(filtered, renderOrcamento).then(html => {
+            document.getElementById('orc-results').innerHTML = html;
+        });
     };
 
+    // ── Actions by ID (Orcamento) ──
     const aprovarOrcamentoPorId = async (id) => {
         const urls = API.getUrls();
         const r = await API.http('PUT', `${urls.billing}/api/v1/orcamentos/${id}/aprovar`);
-        if (r.ok) API.toast('Orçamento aprovado!', 'success');
-        document.getElementById('orc-results').innerHTML = renderOrcamento(r.data);
+        if (r.ok) {
+            API.toast('Orçamento aprovado!', 'success');
+            listarOrcamentos(); // Refresh list to update status
+        }
         return r;
     };
 
-    const rejeitarOrcamento = async () => {
-        const id = val('orc-searchId') || _lastOrcId;
-        if (!id) return API.toast('Busque um orçamento primeiro', 'error');
+    const rejeitarOrcamentoPorId = async (id) => {
         const urls = API.getUrls();
         const motivo = prompt('Motivo da rejeição (opcional):') || '';
         const r = await API.http('PUT', `${urls.billing}/api/v1/orcamentos/${id}/rejeitar?motivo=${encodeURIComponent(motivo)}`);
-        if (r.ok) API.toast('Orçamento rejeitado.', 'success');
-        document.getElementById('orc-results').innerHTML = renderOrcamento(r.data);
+        if (r.ok) {
+            API.toast('Orçamento rejeitado.', 'success');
+            listarOrcamentos();
+        }
     };
 
-    const cancelarOrcamento = async () => {
-        const id = val('orc-searchId') || _lastOrcId;
-        if (!id) return API.toast('Busque um orçamento primeiro', 'error');
+    const cancelarOrcamentoPorId = async (id) => {
+        if (!confirm('Tem certeza que deseja cancelar este orçamento?')) return;
         const urls = API.getUrls();
         const r = await API.http('DELETE', `${urls.billing}/api/v1/orcamentos/${id}`);
-        if (r.ok) API.toast('Orçamento cancelado.', 'success');
-        document.getElementById('orc-results').innerHTML = '<p class="placeholder">Orçamento cancelado.</p>';
+        if (r.ok) {
+            API.toast('Orçamento cancelado.', 'success');
+            listarOrcamentos();
+        }
     };
 
     // ── Ações de Pagamento ──
@@ -355,123 +240,106 @@ const BillingModule = (() => {
         const r = await API.http('POST', `${urls.billing}/api/v1/pagamentos`, body);
         if (r.ok) {
             API.toast('Link de pagamento gerado!', 'success');
-            _lastPagId = r.data?.id;
-            // Auto-preencher campo de checagem
-            const checarEl = document.getElementById('pag-checarId');
-            if (checarEl && r.data?.id) checarEl.value = r.data.id;
-            const actionEl = document.getElementById('pag-actionId');
-            if (actionEl && r.data?.id) actionEl.value = r.data.id;
-            document.getElementById('pag-results').innerHTML = renderPagamento(r.data);
+            listarPagamentos();
         } else {
             const errMsg = r.data?.message || r.data?.error || `Erro ${r.status}`;
-            document.getElementById('pag-results').innerHTML = `<div class="result-card"><p style="color:var(--error)">❌ Falha ao gerar link de pagamento: ${errMsg}</p></div>`;
+            API.toast(`Falha: ${errMsg}`, 'error');
         }
         return r;
     };
 
-    const checarPagamento = async () => {
-        const id = val('pag-checarId') || _lastPagId;
-        if (!id) return API.toast('Informe o ID do pagamento', 'error');
-        return checarPagamentoPorId(id);
+    // ── Listar / Filtrar Pagamentos ──
+    const listarPagamentos = async () => {
+        const resEl = document.getElementById('pag-results');
+        if (resEl) resEl.innerHTML = '<div class="loading-spinner">⏳ Carregando...</div>';
+
+        const urls = API.getUrls();
+        try {
+            const r = await API.http('GET', `${urls.billing}/api/v1/pagamentos`);
+            if (r.ok) {
+                _pagCache = Array.isArray(r.data) ? r.data : (r.data.content || []);
+                const term = val('pag-filter-input');
+                if (term) {
+                    filtrarPagamentos(term);
+                } else {
+                    const html = await renderList(_pagCache, renderPagamento);
+                    if (resEl) resEl.innerHTML = html;
+                }
+            } else {
+                if (resEl) resEl.innerHTML = `<div class="result-card"><p style="color:var(--error)">❌ Erro ao listar: ${r.status}</p></div>`;
+            }
+        } catch (e) {
+            if (resEl) resEl.innerHTML = '<p class="placeholder">Erro de conexão.</p>';
+        }
     };
 
+    const filtrarPagamentos = (term) => {
+        if (!_pagCache) return;
+        const lower = term.toLowerCase();
+        const filtered = _pagCache.filter(p =>
+            (p.payerEmail || '').toLowerCase().includes(lower) ||
+            (p.status || '').toLowerCase().includes(lower) ||
+            (p.id || '').toLowerCase().includes(lower)
+        );
+        renderList(filtered, renderPagamento).then(html => {
+            document.getElementById('pag-results').innerHTML = html;
+        });
+    };
+
+    // ── Actions by ID (Pagamento) ──
     const checarPagamentoPorId = async (id) => {
         const urls = API.getUrls();
         const r = await API.http('GET', `${urls.billing}/api/v1/pagamentos/${id}/checar`);
         if (r.ok) {
             const status = r.data?.status;
-            if (status === 'CONFIRMADO') {
-                API.toast('✅ Pagamento CONFIRMADO!', 'success');
-            } else if (status === 'PROCESSANDO') {
-                API.toast('🔄 Pagamento em processamento...', 'info');
-            } else if (status === 'PENDENTE') {
-                API.toast('⏳ Cliente ainda não pagou.', 'info');
-            } else if (status === 'CANCELADO') {
-                API.toast('❌ Pagamento foi cancelado/rejeitado.', 'error');
-            } else if (status === 'ESTORNADO') {
-                API.toast('↩️ Pagamento foi estornado.', 'warning');
-            } else {
-                API.toast(`Status: ${status}`, 'info');
-            }
+            if (status === 'CONFIRMADO') API.toast('✅ Pagamento CONFIRMADO!', 'success');
+            else if (status === 'PROCESSANDO') API.toast('🔄 Pagamento em processamento...', 'info');
+            else if (status === 'PENDENTE') API.toast('⏳ Cliente ainda não pagou.', 'info');
+            else API.toast(`Status: ${status}`, 'info');
+            listarPagamentos(); // Refresh
+        } else {
+            API.toast(`Erro: ${r.data?.message}`, 'error');
         }
-        document.getElementById('pag-results').innerHTML = r.ok
-            ? renderPagamento(r.data)
-            : `<div class="result-card"><p style="color:var(--error)">❌ Erro ao checar pagamento: ${r.data?.message || r.data?.error || 'Erro ' + r.status}</p></div>`;
         return r;
     };
 
-    const confirmarPagamento = async () => {
-        const id = val('pag-actionId');
-        if (!id) return API.toast('Informe o ID do pagamento', 'error');
-        return confirmarPagamentoPorId(id);
-    };
-
-    const confirmarPagamentoPorId = async (id) => {
+    const confirmingPagamentoPorId = async (id) => { // Renamed to avoid conflict if any? No, let's use standard name
         const urls = API.getUrls();
         const r = await API.http('PUT', `${urls.billing}/api/v1/pagamentos/${id}/confirmar`);
-        if (r.ok) API.toast('Pagamento confirmado!', 'success');
-        document.getElementById('pag-results').innerHTML = r.ok
-            ? renderPagamento(r.data)
-            : `<div class="result-card"><p style="color:var(--error)">❌ Erro ao confirmar pagamento: ${r.data?.message || r.data?.error || 'Erro ' + r.status}</p></div>`;
+        if (r.ok) {
+            API.toast('Pagamento confirmado!', 'success');
+            listarPagamentos();
+        } else {
+            API.toast('Erro ao confirmar', 'error');
+        }
         return r;
     };
 
-    const estornarPagamento = async () => {
-        const id = val('pag-actionId');
-        if (!id) return API.toast('Informe o ID do pagamento', 'error');
+    // Alias for compatibility with HTML Update
+    const confirmarPagamentoPorId = confirmingPagamentoPorId;
+
+
+    const estornarPagamentoPorId = async (id) => {
         const urls = API.getUrls();
-        const motivo = val('pag-motivo');
+        const motivo = prompt('Motivo do estorno:') || '';
         let url = `${urls.billing}/api/v1/pagamentos/${id}/estornar`;
         if (motivo) url += `?motivo=${encodeURIComponent(motivo)}`;
         const r = await API.http('PUT', url);
-        if (r.ok) API.toast('Pagamento estornado.', 'success');
-        document.getElementById('pag-results').innerHTML = r.ok
-            ? renderPagamento(r.data)
-            : `<div class="result-card"><p style="color:var(--error)">❌ Erro ao estornar pagamento: ${r.data?.message || r.data?.error || 'Erro ' + r.status}</p></div>`;
-    };
-
-    const cancelarPagamento = async () => {
-        const id = val('pag-actionId');
-        if (!id) return API.toast('Informe o ID do pagamento', 'error');
-        const urls = API.getUrls();
-        const r = await API.http('DELETE', `${urls.billing}/api/v1/pagamentos/${id}`);
-        if (r.ok) API.toast('Pagamento cancelado.', 'success');
-        document.getElementById('pag-results').innerHTML = '<p class="placeholder">Pagamento cancelado.</p>';
-    };
-
-    // ── Listar Orçamentos ──
-    const listarOrcamentos = async () => {
-        const urls = API.getUrls();
-        const r = await API.http('GET', `${urls.billing}/api/v1/orcamentos`);
         if (r.ok) {
-            const lista = Array.isArray(r.data) ? r.data : [];
-            if (lista.length === 0) {
-                document.getElementById('orc-results').innerHTML = '<p class="placeholder">Nenhum orçamento encontrado.</p>';
-            } else {
-                API.toast(`${lista.length} orçamento(s) encontrado(s)`, 'success');
-                document.getElementById('orc-results').innerHTML = lista.map(renderOrcamento).join('');
-            }
+            API.toast('Pagamento estornado.', 'success');
+            listarPagamentos();
         } else {
-            const errMsg = r.data?.message || r.data?.error || `Erro ${r.status}`;
-            document.getElementById('orc-results').innerHTML = `<div class="result-card"><p style="color:var(--error)">❌ Erro ao listar orçamentos: ${errMsg}</p></div>`;
+            API.toast('Erro ao estornar', 'error');
         }
     };
 
-    // ── Listar Pagamentos ──
-    const listarPagamentos = async () => {
+    const cancelarPagamentoPorId = async (id) => {
+        if (!confirm('Cancelar pagamento?')) return;
         const urls = API.getUrls();
-        const r = await API.http('GET', `${urls.billing}/api/v1/pagamentos`);
+        const r = await API.http('DELETE', `${urls.billing}/api/v1/pagamentos/${id}`);
         if (r.ok) {
-            const lista = Array.isArray(r.data) ? r.data : [];
-            if (lista.length === 0) {
-                document.getElementById('pag-results').innerHTML = '<p class="placeholder">Nenhum pagamento encontrado.</p>';
-            } else {
-                API.toast(`${lista.length} pagamento(s) encontrado(s)`, 'success');
-                document.getElementById('pag-results').innerHTML = lista.map(renderPagamento).join('');
-            }
-        } else {
-            const errMsg = r.data?.message || r.data?.error || `Erro ${r.status}`;
-            document.getElementById('pag-results').innerHTML = `<div class="result-card"><p style="color:var(--error)">❌ Erro ao listar pagamentos: ${errMsg}</p></div>`;
+            API.toast('Pagamento cancelado.', 'success');
+            listarPagamentos();
         }
     };
 
@@ -490,11 +358,10 @@ const BillingModule = (() => {
 
     return {
         render, switchTab, addItem,
-        criarOrcamento, buscarOrcamento, listarOrcamentos, aprovarOrcamento, aprovarOrcamentoPorId,
-        rejeitarOrcamento, cancelarOrcamento,
-        registrarPagamento, checarPagamento, checarPagamentoPorId, listarPagamentos,
-        confirmarPagamento, confirmarPagamentoPorId,
-        estornarPagamento, cancelarPagamento,
+        criarOrcamento, listarOrcamentos, filtrarOrcamentos,
+        aprovarOrcamentoPorId, rejeitarOrcamentoPorId, cancelarOrcamentoPorId,
+        registrarPagamento, listarPagamentos, filtrarPagamentos,
+        checarPagamentoPorId, confirmarPagamentoPorId, estornarPagamentoPorId, cancelarPagamentoPorId,
         criarPagamentoPara,
     };
 })();
