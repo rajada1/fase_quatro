@@ -43,6 +43,12 @@ Solução cloud-native que gerencia o ciclo de vida completo de uma oficina mec�
 | **[oficina-notification-service](https://github.com/rajada1/oficina-notification-service)** | Notificações | 8089 | ✅ Produção |
 | **[oficina-operations-service](https://github.com/rajada1/oficina-operations-service)** | Operações | 8090 | ✅ Produção |
 
+### Frontend
+
+| Repositório | Descrição | Status |
+|-------------|-----------|--------|
+| **[oficina-frontend](https://github.com/rajada1/oficina-frontend)** | Frontend Web da Oficina | ✅ Produção |
+
 ## 🚀 Tecnologias Utilizadas
 
 ### Backend
