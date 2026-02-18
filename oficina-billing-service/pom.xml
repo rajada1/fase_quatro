@@ -23,6 +23,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <aws-java-sdk.version>2.20.26</aws-java-sdk.version>
         <cucumber.version>7.15.0</cucumber.version>
+        <!-- SonarQube -->
+        <sonar.projectKey>grupo99-oficina-billing-service</sonar.projectKey>
+        <sonar.organization>grupo99</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.login>${env.SONAR_TOKEN}</sonar.login>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <dependencyManagement>
@@ -279,6 +285,13 @@
                 </configuration>
             </plugin>
 
+            <!-- SonarQube Scanner -->
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.9.1.2184</version>
+            </plugin>
+
             <!-- JaCoCo -->
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -308,9 +321,9 @@
                                     <element>BUNDLE</element>
                                     <limits>
                                         <limit>
-                                            <counter>INSTRUCTION</counter>
+                                            <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.75</minimum>
+                                            <minimum>0.80</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
@@ -321,9 +334,8 @@
                 <configuration>
                     <excludes>
                         <exclude>**/*Application.class</exclude>
-                        <exclude>**/domain/repository/*.class</exclude>
-                        <exclude>**/infrastructure/messaging/*.class</exclude>
                         <exclude>**/infrastructure/config/*.class</exclude>
+                        <exclude>**/infrastructure/security/*.class</exclude>
                     </excludes>
                 </configuration>
             </plugin>

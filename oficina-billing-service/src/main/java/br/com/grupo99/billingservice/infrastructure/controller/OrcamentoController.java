@@ -43,7 +43,7 @@ public class OrcamentoController {
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
             log.error("Erro ao criar orçamento", e);
-            throw e;
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -61,7 +61,7 @@ public class OrcamentoController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Erro ao obter orçamento", e);
-            throw e;
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -79,7 +79,7 @@ public class OrcamentoController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Erro ao aprovar orçamento", e);
-            throw e;
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -98,7 +98,7 @@ public class OrcamentoController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Erro ao rejeitar orçamento", e);
-            throw e;
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -116,7 +116,7 @@ public class OrcamentoController {
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             log.error("Erro ao cancelar orçamento", e);
-            throw e;
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 

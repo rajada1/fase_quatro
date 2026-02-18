@@ -44,10 +44,9 @@ import static org.assertj.core.api.Assertions.assertThat;
         KafkaConfig.TOPIC_OS_EVENTS,
         KafkaConfig.TOPIC_BILLING_EVENTS,
         KafkaConfig.TOPIC_EXECUTION_EVENTS
-}, brokerProperties = {
-        "listeners=PLAINTEXT://localhost:9093",
-        "port=9093"
 })
+@org.springframework.test.context.TestPropertySource(properties = {
+        "spring.kafka.bootstrap-servers=${spring.embedded.kafka.brokers}" })
 class KafkaEventPublisherTest {
 
     @Autowired

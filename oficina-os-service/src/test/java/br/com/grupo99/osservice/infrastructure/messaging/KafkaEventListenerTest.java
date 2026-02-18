@@ -50,6 +50,8 @@ import static org.mockito.Mockito.*;
         "listeners=PLAINTEXT://localhost:9094",
         "port=9094"
 })
+@org.springframework.test.context.TestPropertySource(properties = {
+        "spring.kafka.bootstrap-servers=${spring.embedded.kafka.brokers}" })
 class KafkaEventListenerTest {
 
     @Autowired

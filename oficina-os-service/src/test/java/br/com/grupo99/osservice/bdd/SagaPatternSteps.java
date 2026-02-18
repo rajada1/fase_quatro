@@ -13,7 +13,7 @@ import io.cucumber.java.pt.Quando;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
@@ -32,7 +32,13 @@ public class SagaPatternSteps {
     @Autowired
     private OrdemServicoRepository ordemServicoRepository;
 
-    @SpyBean
+    @org.springframework.boot.test.mock.mockito.MockBean
+    private org.springframework.kafka.core.KafkaAdmin kafkaAdmin;
+
+    @org.springframework.boot.test.mock.mockito.MockBean
+    private org.springframework.kafka.core.KafkaTemplate<String, Object> kafkaTemplate;
+
+    @org.springframework.boot.test.mock.mockito.MockBean
     private EventPublisherPort eventPublisher;
 
     private OrdemServico ordemServico;
